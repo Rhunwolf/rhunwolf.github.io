@@ -1,0 +1,203 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic);
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.rightfoto{
+float:right;
+margin: 0px 0px 0px 0px;
+position: relative;
+}
+
+body {
+    background-color: #f7f7f7;
+    font-family: 'Roboto', sans-serif;
+	background-image: url(img/paper.jpg);
+}
+
+#ROOF {
+    min-width: 1200px;
+    border-bottom: 1px solid #b5b7ba;
+    background-color: #dfdfdf;
+    margin: 0 auto;
+    height: 50px;
+    text-align: center;
+    padding-top: 18px;
+}
+
+#ROOF #selected {
+    color: #000;
+}
+
+#HOUSE {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+#ROOF a {
+    color: #4d4d4d;
+    font-size: 20px;
+    font-weight: 100;
+    text-align: left;
+    text-decoration: none;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+}
+
+#ROOF span {
+    padding: 0 38px;
+}
+
+#ROOF_HOUSE {
+    height: 500px;
+    min-width: 1000px;
+    margin: 0 auto;
+    min-height: calc(100vh - 77px); /* приклеивает футер к нижнему краю*/
+}
+
+#ROOF_HOUSE h1 {
+    width: 100%;
+    float: left;
+    text-align: center;
+    color: #2e353d;
+    font-size: 40px;
+    font-weight: 300;
+    margin-top: 30px;
+    margin-bottom: 30px;
+	margin-left: 65px;
+}
+
+#ROOF_HOUSE h3 {
+    color: #242424;
+    font-size: 35px;
+    font-weight: 300;
+    text-align: left;
+    margin-left: 41px;
+    margin-bottom: 52px;
+}
+
+#ROOF_HOUSE h5 {
+    color:  #242424;
+    font-size: 24px;
+    text-align: left;
+}
+
+#ROOF_HOUSE #box_photo img {
+    margin-left: 100px;
+/*	margin-right: 100px; */
+	margin-top: 15px; 
+/*	vertical-align: middle; */
+    width: 204px;
+    border-radius: 100%; 
+	float: left;
+/*	margin: 4px 10px 2px 0px; */
+	border:1px solid #CCC;
+	padding:6px;
+	background-color: #ffffff;
+}
+
+#ROOF_HOUSE #box_text {
+    width: 671px;
+    background-color: #ffffff;
+    float: right;
+    padding: 49px 48px 51px 76px;
+    margin-bottom: 50px;
+/*	background-image: url(img/paper.jpg);
+	border: 1px */
+}
+
+#ROOF_HOUSE #box_text img {
+position: relative;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 0px;
+padding-right: 0px;
+}
+
+#ROOF_HOUSE #box_text p {
+    color: #242424;
+    font-size: 24px;
+    font-weight: 100;
+    text-align: left;
+    margin-bottom: 31px;
+	position: absolute;
+}
+
+#ROOF_HOUSE #box_text a  {
+    color: #40678a;
+    font-size: 24px;
+    font-weight: 100;
+    text-align: center;
+    text-decoration: none;
+    padding-right:0px;
+}
+
+
+#ROOF_HOUSE .media {
+    margin-right: 0;
+}
+
+#ROOF_HOUSE #box {
+    background-color: #ffffff;
+    width: 1138px;
+    height: 450px;
+    margin: 70px auto 0 auto;
+    padding-top: 37px;
+    padding-left: 38px;
+}
+
+#ROOF_HOUSE #box p {
+    color: #242424;
+    font-size: 24px;
+    font-weight: 100;
+    text-align: left;
+    margin-top: 37px;
+    margin-bottom: 30px;
+}
+
+#ROOF_HOUSE #box input {
+    border: 1px solid #a0a0a0;
+    background-color: #f5f5f5;
+    width: 457px;
+    height: 34px;
+    padding-left:10px;
+    font-size:20px;
+    font-weight: 100;
+    margin-bottom: 12px;
+}
+
+#ROOF_HOUSE #box a {
+    display: block;
+    float: left;
+    background-color:  #8cbbd3;
+    color:  #ffffff;
+    font-size: 24px;
+    font-weight: 300;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 30px;
+    padding:11px 51px;
+}
+
+#ROOF_HOUSE #box a:hover {
+    background-color: #5ba1d3;
+}
+
+#FOOTER { /* # == id */
+    background-color: #434445;
+    width: 100%;
+    float: left;
+    height: 60px;
+    text-align: center;
+    color: #a4a4a4;
+    font-size: 20px;
+    font-weight: 100;
+    line-height: 60px;
+}
+
+#FOOTER a {
+    color: inherit;
+}

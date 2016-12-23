@@ -1,0 +1,1256 @@
+﻿<!DOCTYPE HTML PUBLIC>
+<html>
+<meta charset="utf-8">
+<head>
+
+<title>The Longest Way Alone</title>
+	<style type="text/css">
+   body { 
+    background-image: url(img/tlwa/background.png); /* Путь к фоновому рисунку */
+    background-position: left bottom; /* Положение фона */
+    background-repeat: repeat; /* Повторяем фон */
+   }
+   p {
+	font-family: Trebuchet MS; <!-- убрать css параграфов, которые я не использую? -->
+	text-indent: 20px; /* Отступ первой строки в пикселах */
+   }
+	</style>
+</head>
+			
+<body onload="menuMainWithRestartMusic()">
+
+<TABLE BORDER="0" WIDTH="100%" HEIGHT="100%">
+	<TR HEIGHT="20">
+		<TD align="right">
+			<div id="musicBar"><!-- id=musicBar --></div>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="center">
+			<TABLE BORDER="0" WIDTH="1024" HEIGHT="512" BGCOLOR="#F0F0F0">
+				<TR WIDTH="1024">
+					<TD WIDTH="512" HEIGHT="512" rowspan="2" BGCOLOR="#FFFAFA">
+						<div align="center" style="height:512px; border: 2px solid #CCC;"><img id="imageBar" src="img/tlwa/earth-africa-europe.png" width="512" height="512"><!-- id=imageBar --></div>
+					</TD>
+					<TD WIDTH="232" HEIGHT="128" BGCOLOR="#FFFAFA">
+						<div id="statusBar" style="height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left"><!-- id=statusBar --></div>
+					</TD>
+					<TD WIDTH="280" HEIGHT="128" BGCOLOR="#FFFAFA">
+						<div id="journeyBar" style="height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left"><!-- id=journeyBar --></div>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH="512" HEIGHT="384" colspan="2" BGCOLOR="#FFFAFA">
+						<TABLE BORDER="0" WIDTH="512" HEIGHT="384">
+							<TR>
+								<TD>
+									<div id="actionBar" style="height:320px; border: 2px solid #CCC; padding: 10px 10px 5px; font-size:14pt; color:#000000" align="left"><!-- id=actionBar --></div>
+								</TD>
+							</TR>
+							<TR>
+								<TD>
+									<div id="buttonBar" style="height:20px; border: 2px solid #CCC; padding: 5px 5px 5px;" align="center"><!-- id=buttonBar --></div>
+								</TD>
+							</TR>
+						</TABLE>
+					</TD> 
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+</TABLE>
+
+<script type="text/javascript">
+		// Автор игры Дима Тэлэри https://vk.com/rhunwolf
+		// Эта игра сделана как первое упраженине в программировании на js, поэтому здесь будет очень много комментариев
+		
+		// провести рефакторинг
+		// https://ru.wikipedia.org/wiki/%D0%9A%D0%BE%D0%B4_%D1%81_%D0%B7%D0%B0%D0%BF%D0%B0%D1%88%D0%BA%D0%BE%D0%BC
+		
+		/*
+
+дописать финал function finalChoiceBetweenProximaAndAstra() {
+
+полететь к проксиме центавра - это крюк, но не тупик
+
+мини игра - проанализируй и выбери лучшую планету, топливо уже не дают в финале
+
+// КОНЕЦ ИГРЫ, ЕСЛИ КОНЧИЛИСЬ РЕСУРСЫ на этапе финала
+
+для вин-скрина вывести счетчики - сколько астероидов посещено, сколько ресурсов добыто и пр.
+
+все замечания типа +++ !!! СДЕЛАТЬ 
+
+убрать все лишние комментарии, оставить только по существу, для себя
+
+использовать сложные условия || &&
+
+заменить повторяющиеся однотипные куски кода на маленькие удобные функции, ввести маленькие вспомогательные функции везде где 
+
+только можно
+
+вместо кучи переменных можно хранить данные в массивах
+
+встроить кнопки соцсетей
+
+подсветка важного текста в интерфейсе
+
+события с выбором, сюжет и\или починка оборудования
+
+сделать бары для корпуса, оборудования и топлива
+
+смена изображений астероидов в зависимости от их типа и размера
+
+на мой сайт залить: 
+1. эту игру, 
+2. резюме, 
+3. ссылки на изданное\ролики\блоги и пр. - в виде цветной плитки
+
+Ctrl + Shift + D == скопировать строку
+
+(ggg = ggg + 2) === (ggg += 2)
+
+			// сюда вставить события, зависящие от пройденного расстояния  +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+			// в зависимости от длины пройденного пути по пути происходят разные события и воспоминания USE
+			// в начале пути Земля подсказывает, что делать, затем связь обрывается
+			// 10.000 лет пути, солнце взрывается в первые два года пути, далее шаги идут примерно по 200 лет игра проходится за 50 ходов
+			// переключение в более сложный режим по пути следования (удаляем из массивов объектов и астероидов хорошие значения)
+			// событие - половина пути от земли
+			// событие - еще видно юпитер и сатурн - добрый знак
+			// случайные хорошие и плохие события по пути, зависящие от запаса ресурсов (наказывать богачей, помогать беднякам) и от пройденного пути
+			// агония при 5 и менее % оборудования
+			// тексты из рассказа
+			// воспоминания
+			// полом оборудование
+			// прилетел к Проксиме Центавра
+			// повышение сложности
+			// генератор событий в пути, возможность сказать да-нет
+			// после события оно удаляется из массива
+			// водородное облако
+			// молекулярная туманность
+			// вспышка сверхновой вдалеке
+			// в первом прыжке ты отбрасываешь ракету-носитель для преодоления гравитации
+			// ионный шторм от далекой ..., и ты видишь радуги и огни святого эльма от взмд его с мангнитной защитой 
+			// ты пролетел такую-то степень двойки
+			// ты перестал различать планеты в солн системе
+			// я сейчас лечу (от точки старта) дольше, чем одомашнили огонь или изобрели пиьменность
+			// мой ХХХ день рождения
+			// половина пути 
+			// alert("Они назвали тебя USE (Universe Scientific Expedition). И ты должна стать, наверно, самым долгоживущим из всех земных созданий — и, возможно, последним. Мудрая черепаха может прожить триста лет, остистая сосна — шесть тысяч. Срок жизни USE, предусмотренный твоими создателями, должен был превысить сто веков. И хотя твой мозг состоит из железа и германия, легированного мышьяком, а сердце — из крошечного сгустка водородной плазмы, USE — с самого момента своего появления — ты житель Земли. Ты можешь чувствовать, сомневаться, а также — это ты обнаружишь по прошествии множества темных столетий, предшествовавших твоему концу, — забывать.\n");
+
+			// либо событие либо следующий алерт
+			// событие генерируется случайно + при преодолении времени и расстояния
+			// 5-10 событий за один полёт, не более (соответственно у всех, кроме проксимы и взрыва солнца - не 100% вероятность)
+			
+			// КОНЕЦ ИГРЫ, ЕСЛИ КОНЧИЛИСЬ РЕСУРСЫ после эвента???  +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+			
+			//	max_TravelLength <= TravelLength; финал
+
+возможно внести ключи в массивы
+
+Ключом ассоциативного массива может быть любая строка, которая ассоциируется с конкретным элементом массова. Например, для 
+
+массива:
+var man = {
+lastname: "Иванов",
+firstname: "Василий",
+middlename: "Петрович"
+}
+man - имя массива
+lastname, firstname и middlename - ключи массива
+Иванов, Василий, Петрович - значения элементов массива
+По ключу можно обратиться к конкретному элементу.
+
+		*/
+
+		// СЛУЖЕБНЫЕ
+		
+	function imageBarUpdate() {
+		document.getElementById("imageBar").src = (imageBarUpdateImg);
+	}
+
+	function actionBarUpdate() {
+		document.getElementById("actionBar").innerHTML = (actionBarUpdateText);
+	}
+
+	function statusBarUpdate() {
+		document.getElementById("statusBar").innerHTML = (statusBarUpdateText);
+	}
+	
+	function journeyBarUpdate() {
+		document.getElementById("journeyBar").innerHTML = (journeyBarUpdateText);
+	}
+	
+	function buttonBarUpdate() {
+		document.getElementById("buttonBar").innerHTML = (buttonBarUpdateText);
+	}
+	
+	function musicBarUpdate() {
+		document.getElementById("musicBar").innerHTML = (musicBarUpdateFile);
+	}
+
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min; // генератор случайного числа с заданными границами включительно
+	}
+		
+		// МЕНЮ
+	
+	function menuMainWithRestartMusic() { 
+		// запуск главного меню с перезапуском музыки
+		musicBarUpdateFile = ("<audio controls autoplay><source src='music/P_C_III_-_01_-_Exit_Exit.mp3' type='audio/mpeg'></audio>");
+		musicBarUpdate();
+		menuMain();
+	}
+	
+	function menuMain() {
+		ShipFuel = 150; // обнуляем статус
+		ShipHull = 100; 
+		ShipEquip = 100; 
+		ShipWeight = +ShipFuel + 10; 
+		TravelLength = 0;
+		TravelYears = 0;
+				
+		statusBarUpdateText = ("<center><strong><font style='font-size:18pt;' color='#444444'><br>The Longest<br>Way Alone<br></font></strong></center>");
+		statusBarUpdate();
+		journeyBarUpdateText = ("<br><font style='font-size:12pt;' color='#444444'>&nbsp&nbsp&nbspПроцедурно-генерируемая браузерная игра по мотивам рассказа Вернора&nbspВинджа ''Дальний&nbspприцел''.</font><br>");
+		journeyBarUpdate();
+		actionBarUpdateText = ("<center><br><br><br><br><br><br> <input type='button' value='Новая игра' onclick='menuNewGame()'> </center>");
+		actionBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/earth-africa-europe.png");
+		imageBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Обучение' onclick='menuTutorialGeneral();'> &nbsp&nbsp&nbsp <input type='button' value='О создателях' onclick='menuCredits()'>");
+		buttonBarUpdate();
+	}
+		
+	function menuTutorialGeneral() {
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspТвоя миссия — достичь системы Альфа Центавра. По пути тебе нужно будет:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• следить за <b>состоянием корабля</b>, вовремя добывая ресуры;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• выбирать наиболее богатые и безопасные <b>астероиды для добычи</b>;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• по прибытии провести <b>спектральный анализ</b> и выбрать наиболее подходящую планету земного типа.<br><br>&nbsp&nbsp&nbspАккуратно балансируй между тратой топлива и добычей ресурсов, и ты сможешь достигнуть точки назначения, преодолев 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфа Центавра.");
+		actionBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/read.png");
+		imageBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Параметры корабля' onclick='menuTutorialShipStatus()'>&nbsp&nbsp&nbsp<input type='button' value='Добыча ресурсов' onclick='menuTutorialAsteroids()'>&nbsp&nbsp&nbsp<input type='button' value='Анализ планет' onclick='menuTutorialSpectralAnalysis()'>&nbsp&nbsp&nbsp<input type='button' value='В меню' onclick='menuMain()'>&nbsp&nbsp&nbsp");
+		buttonBarUpdate();
+	}  
+	
+	function menuTutorialShipStatus() {
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspУ тебя есть 4 основных параметра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• масса и запас топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• прочность корпуса и сохранность оборудования.<br><br>&nbsp&nbsp&nbsp<b>Топливо</b> расходуется на полёт и добычу ресурсов. Чем меньше твоя <b>масса</b>, тем ты меньше тратишь топлива при движении.<br>&nbsp&nbsp&nbsp<b>Корпус</b> и <b>оборудование</b> разрушаются в процессе полета и от аномалий. Корпус можно восстанавливать.<br>&nbsp&nbsp&nbspЕсли один из параметров упадет до нуля, то твоя миссия завершится неудачей.");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
+		buttonBarUpdate();
+	} 
+	
+	function menuTutorialAsteroids() {
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspВ процессе игры ты будешь совершать перелёты между астероидами. Они отличаются:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>дальностью</b> (затраты топлива и % пройденного пути);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>размером</b> (потенциальное богатство ресурсами);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• наличием в них <b>аномалии</b> (повреждение корабля при добыче).<br><br>&nbsp&nbsp&nbspПрибыв к астероиду, ты можешь добыть ресурсы и\или лететь дальше.<br>&nbsp&nbsp&nbspВ леднике можно добыть водород для <b>топлива</b>, в жиле — металлы для починки <b>корпуса</b>.");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
+		buttonBarUpdate();
+	} 
+	
+	function menuTutorialSpectralAnalysis() {
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПеред тем, как ты покинешь Солнечную систему, тебе нужно попрактиковаться в спектральном анализе. Сравни планеты нашей системы и запомни, чем отличается Земля от остальных планет.<br><br><div id='PlanetBoxInActionBar' align='right'>Меркурий:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Венера:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Земля:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Марс:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div>");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Провести анализ' onclick='doAnalysisSolar()'>&nbsp&nbsp&nbsp<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
+		buttonBarUpdate();
+	} 
+	
+	function menuCredits() {
+		actionBarUpdateText = ("<center><font style='font-size:12pt;' color='#444444'>Над игрой работали:</font></center><br>&nbsp&nbsp&nbsp<strong>Дмитрий Тэлэри</strong> — геймдизайн, программирование<br>&nbsp&nbsp&nbsp<strong>Светлана Михина</strong> — графика, тестирование<br><br><center><font style='font-size:12pt;' color='#444444'>Благодарности:</center><br>&nbsp&nbsp&nbsp<strong>Леонид Галкин</strong> — за помощь с html.<br>&nbsp&nbsp&nbspИллюстрации авторства <b>Delapouite</b>, <b>Lorc</b> и <b>Skoll</b><br>(лицензия CC BY 3.0 <a href='http://game-icons.net/' target='_blank'>game-icons.net</a>).<br>&nbsp&nbsp&nbspМузыка авторства <b>P C III</b>, <b>.crk</b> и <b>Ketsa</b><br>(лицензия CC BY 3.0 <a href='http://freemusicarchive.org/' target='_blank'>freemusicarchive.org</a>).<br>&nbsp&nbsp&nbspИгра сделана после прохождения на портале <a href='https://geekbrains.ru/' target='_blank'>geekbrains.ru</a> курса ''Основы программирования''. </font>");
+		actionBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/power-generator.png");
+		imageBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuMain()'>");
+		buttonBarUpdate();
+	}
+	
+		// ИГРА
+	
+	function menuNewGame() {
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspТы — Universe Scientific Expedition.<br><br>&nbsp&nbsp&nbspМы, твои родители, назваем тебя просто USE.<br>&nbsp&nbsp&nbspТы — искусственный интеллект на борту ракеты-носителя S-5N.<br>&nbsp&nbsp&nbspМы создали тебя с единственной, но очень важной задачей — прибыть в систему Альфа Центавра. Найти там подходящую планету и доставить на неё твой груз.<br>&nbsp&nbsp&nbspТебе нужно преодолеть 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфа Центавра.<br>&nbsp&nbsp&nbspUSE, всё человечество надеется на тебя. Не подведи нас!<br>&nbsp&nbsp&nbspМы желаем тебе успешного путешествия!");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='На взлёт!' onclick='menuNewGameNext()'>");
+		buttonBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/rocket-thruster.png");
+		imageBarUpdate();
+		statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
+		statusBarUpdate();
+		journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
+		journeyBarUpdate();
+	}
+
+	function menuNewGameNext() {
+		ShipFuel = ShipFuel - parseInt(getRandomInt(25, 50));
+		statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
+		statusBarUpdate();
+			
+		actionBarUpdateText = ("<br><br>&nbsp&nbsp&nbspUSE, твой очень долгий путь в одиночестве начинается...");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Покинуть систему' onclick='generateAsteroids()'>");
+		buttonBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/solar-system.png");
+		imageBarUpdate();
+	}
+	
+	function planetRandomizer () {
+	
+		var TotalNumberOfPlanets = +NumberOfProximaCentauriPlanets + +NumberOfAstraCentauriPlanets + +NumberOfBakerCentauriPlanets;
+		var TotalCentauriPlanetMatrix = [];
+		
+		// генерирует случайную планету из массива, потом удаляет использованные значения
+		for (var i7 = 1; i7 <= TotalNumberOfPlanets; i7++) {
+			var TempPlanet = [];
+				
+			var PlanetName = Math.floor(Math.random() * CentauriPlanetMatrix[0].length);
+			var TemperatureRegime = Math.floor(Math.random() * CentauriPlanetMatrix[1].length);
+			var OrganicPresence = Math.floor(Math.random() * CentauriPlanetMatrix[2].length);
+			var WaterSaturation = Math.floor(Math.random() * CentauriPlanetMatrix[3].length);
+		
+			TempPlanet.push(CentauriPlanetMatrix[0][PlanetName]);
+			CentauriPlanetMatrix[0].splice (PlanetName,1);
+		
+			TempPlanet.push(CentauriPlanetMatrix[1][TemperatureRegime]);
+			CentauriPlanetMatrix[1].splice (TemperatureRegime,1);
+		
+			TempPlanet.push(CentauriPlanetMatrix[2][OrganicPresence]);
+			CentauriPlanetMatrix[2].splice (OrganicPresence,1);
+			
+			TempPlanet.push(CentauriPlanetMatrix[3][WaterSaturation]);
+			CentauriPlanetMatrix[3].splice (WaterSaturation,1);
+		
+			TotalCentauriPlanetMatrix.push(TempPlanet); // получаем матрицу, строки - планеты, столбцы - название, температурный режим, жизнь, сухость
+		}
+		
+		TotalCentauriPlanetMatrix.sort(function(a, b) { return a[0] == b[0] ? a > b : a[0] > b[0] }); // сортировка по первому столбцу
+		
+		for (var i8 = 0; i8 <= TotalNumberOfPlanets - 1; i8++) { // разделяем общую матрицу на три отдельных
+		
+			if (TotalCentauriPlanetMatrix[i8][1] == "Проксима I") {
+				ProximaPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
+			} else if (TotalCentauriPlanetMatrix[i8][1] == "Астра I" || TotalCentauriPlanetMatrix[i8][1] == "Астра II" || TotalCentauriPlanetMatrix[i8][1] == "Астра III") {
+				AstraPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
+			} else if (TotalCentauriPlanetMatrix[i8][1] == "Бейкер I" || TotalCentauriPlanetMatrix[i8][1] == "Бейкер II" || TotalCentauriPlanetMatrix[i8][1] == "Бейкер III" || TotalCentauriPlanetMatrix[i8][1] == "Бейкер IV") {
+				BakerPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
+			}
+		
+		}
+		
+	}
+		
+	function doSpectralAnalysis (array) { 
+		// анализируем массив
+		SpectralAnalysisResult = []; // обнуляем массив
+		
+		if (array[1] == "Cold") { // заменяем по маске значения планеты в адреса пикселей
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>"); 
+		} else if (array[1] == "Warm") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorRED.png'>", "<img src='img/tlwa/colorRED.png'>", "<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>"); 
+		} else if (array[1] == "Hot") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorRED.png'>", "<img src='img/tlwa/colorRED.png'>", "<img src='img/tlwa/colorRED.png'>", "<img src='img/tlwa/colorRED.png'>"); 
+		}
+		
+		if (array[2] == "Lifeless") { 
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorGREY.png'>", "<img src='img/tlwa/colorGREY.png'>", "<img src='img/tlwa/colorGREY.png'>", "<img src='img/tlwa/colorGREY.png'>"); 
+		} else if (array[2] == "Mosses") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorGREEN.png'>", "<img src='img/tlwa/colorGREEN.png'>", "<img src='img/tlwa/colorGREY.png'>", "<img src='img/tlwa/colorGREY.png'>"); 
+		} else if (array[2] == "Forests") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorGREEN.png'>", "<img src='img/tlwa/colorGREEN.png'>", "<img src='img/tlwa/colorGREEN.png'>", "<img src='img/tlwa/colorGREEN.png'>"); 
+		}
+		
+		if (array[3] == "Dry") { 
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorSAND.png'>", "<img src='img/tlwa/colorSAND.png'>", "<img src='img/tlwa/colorSAND.png'>", "<img src='img/tlwa/colorSAND.png'>"); 
+		} else if (array[3] == "Humid") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorSAND.png'>", "<img src='img/tlwa/colorSAND.png'>"); 
+		} else if (array[3] == "Flood") {
+			SpectralAnalysisResult.push("<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>"); 
+		}
+				
+		function compareRandom(a, b) { // функция для перемешивания
+			return Math.random() - 0.5;
+		}
+		SpectralAnalysisResult.sort(compareRandom); // перемешиваем
+	}
+	
+	function doAnalysisSolar() {
+		document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+		doSpectralAnalysis (SolarPlanetPreparedMatrix[0])
+		document.getElementById("planet1").innerHTML = SolarPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>"; // склеиваем строку и выводим
+		doSpectralAnalysis (SolarPlanetPreparedMatrix[1])
+		document.getElementById("planet2").innerHTML = SolarPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (SolarPlanetPreparedMatrix[2])
+		document.getElementById("planet3").innerHTML = SolarPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (SolarPlanetPreparedMatrix[3])
+		document.getElementById("planet4").innerHTML = SolarPlanetPreparedMatrix[3][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";	
+	}
+	
+	function doAnalysisProxima() {
+		document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+		doSpectralAnalysis (ProximaPlanetPreparedMatrix[0])
+		document.getElementById("planet1").innerHTML = ProximaPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+	}
+	
+	function doAnalysisAstra() {
+		document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+		doSpectralAnalysis (AstraPlanetPreparedMatrix[0])
+		document.getElementById("planet1").innerHTML = AstraPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (AstraPlanetPreparedMatrix[1])
+		document.getElementById("planet2").innerHTML = AstraPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (AstraPlanetPreparedMatrix[2])
+		document.getElementById("planet3").innerHTML = AstraPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+	}
+	
+	function doAnalysisBaker() {
+		document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+		doSpectralAnalysis (BakerPlanetPreparedMatrix[0])
+		document.getElementById("planet1").innerHTML = BakerPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (BakerPlanetPreparedMatrix[1])
+		document.getElementById("planet2").innerHTML = BakerPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (BakerPlanetPreparedMatrix[2])
+		document.getElementById("planet3").innerHTML = BakerPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+		doSpectralAnalysis (BakerPlanetPreparedMatrix[3])
+		document.getElementById("planet4").innerHTML = BakerPlanetPreparedMatrix[3][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
+	}
+	
+	function finalChoiceBetweenProximaAndAstra() { // ДОДЕЛАТЬ - выбор между точкой выбора, проксимой и бейкером. перелёты уже в треугольнике. после выбора системы  летишь в неё, затем в отдельном окне анализируешь планеты, затем принимаешь решение об посадке или улетаешь. Счетчики пути и времени продолжают наматываться, но нет % пути и расстояние до Альфы уже не считается. они заменяются на статус - вы сейчас в системе такой-то. и можно погибнуть, если что-то закончится. посадка дополнительно отнимает 50% оборудования и корпуса, но не убивает (?) - больше для эффектности. Затем гибель при крушении, и подведение итогов выбора, финал
+		
+		planetRandomizer ()		
+		
+		
+		
+		actionBarUpdateText = ("");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Полёт к " +AsteroidName1+ "' onclick='flightToAsteroid1()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к " +AsteroidName2+ "' onclick='flightToAsteroid2()'>");
+		buttonBarUpdate();
+		
+		imageBarUpdateImg = ("img/tlwa/StarSkyGreenZone.png");
+		imageBarUpdate();
+	}
+	
+	function generateAsteroids() {
+			
+			if (TravelLength >= max_TravelLength - LastJump) { // уходим в финал
+				finalChoiceBetweenProximaAndAlpha()
+			}
+			
+			// ГЕНЕРАТОР АСТЕРОИДОВ - надо сделать цикл, если количество астероидов у нас плавающее, сейчас фикс 2 астероида, а надо сделать от 1 до 3
+			
+			var RandArray = 0;
+			AsteroidNameLength1 = (parseInt(getRandomInt(4, 7)));
+			AsteroidNameLength2 = (parseInt(getRandomInt(4, 7)));
+			AsteroidName1 = "A-";
+			AsteroidName2 = "A-";
+			
+			for (var i1 = 1; i1 <= AsteroidNameLength1; i1++) {
+				RandArray = Math.floor(Math.random() * AsteroidNameGenerator.length);
+				AsteroidName1 = AsteroidName1 + (AsteroidNameGenerator[RandArray]).toString();
+			}
+
+			for (var i2 = 1; i2 <= AsteroidNameLength2; i2++) {
+				RandArray = Math.floor(Math.random() * AsteroidNameGenerator.length);
+				AsteroidName2 = AsteroidName2 + (AsteroidNameGenerator[RandArray]).toString();
+			}
+
+			var NewDist = parseInt(getRandomInt(1, 100));
+			var NewProb = parseInt(getRandomInt(1, 100));
+			var NewSize = parseInt(getRandomInt(1, 100));
+
+			// генерация дистанции до 1-ого астероида в зеленой зоне
+			if (NewDist >= 81) {
+				Аs1Dist = 1825 + (parseInt(getRandomInt(0, 400))); 
+			} // 5,0% расстояния 2063 вероятность 20%
+			else if (NewDist >= 51) {
+				Аs1Dist = 1425 + (parseInt(getRandomInt(0, 400))); 
+			} // 4,0% расстояния 1650 вероятность 30%
+			else if (NewDist >= 21) {
+				Аs1Dist = 1025 + (parseInt(getRandomInt(0, 400))); 
+			} // 3,0% расстояния 1238 вероятность 30%
+			else {
+				Аs1Dist = 625 + (parseInt(getRandomInt(0, 400))); 
+			} // 2,0% расстояния 825, 1% это 412,5, 0,5% это 206 вероятность 20%
+
+			// генерация сложности 1-ого астероида в зеленой зоне
+			if (NewProb >= 51 - DifficultyModifier) {
+				Аs1Prob = 1; 
+			}
+			else {
+				Аs1Prob = 0; 
+			}
+
+			// генерация размера 1-ого астероида в зеленой зоне
+			if (NewSize >= 91) {
+				Аs1Size = 4; 
+			}
+			else if (NewSize >= 71) {
+				Аs1Size = 3; 
+			}
+			else if (NewSize >= 31) {
+				Аs1Size = 2; 
+			}
+			else if (NewSize >= 11) {
+				Аs1Size = 1; 
+			}
+			else {
+				Аs1Size = 0;
+				Аs1Prob = 0; 
+			}
+
+			// накидка второго астероида
+			NewDist = parseInt(getRandomInt(1, 100));
+			NewProb = parseInt(getRandomInt(1, 100));
+			NewSize = parseInt(getRandomInt(1, 100));
+			
+			// генерация дистанции до 2-ого астероида
+			if (NewDist >= 81) {
+				Аs2Dist = 1825 + (parseInt(getRandomInt(0, 400))); 
+			}
+			else if (NewDist >= 51) {
+				Аs2Dist = 1425 + (parseInt(getRandomInt(0, 400))); 
+			}
+			else if (NewDist >= 21) {
+				Аs2Dist = 1025 + (parseInt(getRandomInt(0, 400))); 
+			}
+			else {
+				Аs2Dist = 625 + (parseInt(getRandomInt(0, 400))); 
+			}
+
+			// генерация сложности 2-ого астероида в зеленой зоне
+			if (NewProb >= 51 - DifficultyModifier) {
+				Аs2Prob = 1; 
+			}
+			else {
+				Аs2Prob = 0; 
+			}
+
+			// генерация размера 2-ого астероида в зеленой зоне
+			if (NewSize >= 91) {
+				Аs2Size = 4; 
+			}
+			else if (NewSize >= 71) {
+				Аs2Size = 3; 
+			}
+			else if (NewSize >= 31) {
+				Аs2Size = 2; 
+			}
+			else if (NewSize >= 11) {
+				Аs2Size = 1; 
+			}
+			else {
+				Аs2Size = 0;
+				Аs2Prob = 0; 
+			}
+
+			// высчитываем, сколько потребуется топлива на прыжок
+						
+			var ShipFuelTemp1 = ShipFuel;
+			var ShipFuelTemp2 = ShipFuel;
+			var ShipWeightTemp1 = ShipWeight;
+			var ShipWeightTemp2 = ShipWeight;
+			
+			for (var i3 = 1; i3 <= Аs1Dist; i3++) { // высчитываем расход топлива за каждый километр отдельно
+				ShipFuelTemp1 = ShipFuelTemp1 - ((1/35)*(ShipWeightTemp1/100));
+				ShipWeightTemp1 = parseInt(ShipFuelTemp1) + 10;
+			}
+					
+			ShipFuelTemp1 = ShipFuelTemp1.toFixed(0)
+			ShipFuelTempExpences1 = ShipFuel - ShipFuelTemp1;
+			
+			for (var i4 = 1; i4 <= Аs2Dist; i4++) { // высчитываем расход топлива за каждый километр отдельно
+				ShipFuelTemp2 = ShipFuelTemp2 - ((1/35)*(ShipWeightTemp2/100));
+				ShipWeightTemp2 = parseInt(ShipFuelTemp2) + 10;
+			}
+					
+			ShipFuelTemp2 = ShipFuelTemp2.toFixed(0)
+			ShipFuelTempExpences2 = ShipFuel - ShipFuelTemp2;
+		
+		// ИГРОК ВЫБИРАЕТ АСТЕРОИД ДЛЯ ПРЫЖКА
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстрогация астероида " +AsteroidName1+ ": <br>&nbsp&nbsp&nbsp&nbsp&nbsp• расстояние — " +Аs1Dist+ " млрд км ("+ (100*Аs1Dist/max_TravelLength).toFixed(0) +"%); <br>&nbsp&nbsp&nbsp&nbsp&nbsp• потребуется " +ShipFuelTempExpences1+ " тонн топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• размер — " +Аs1Size+ " км в радиусе;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• зарегистрировано аномалий: " +Аs1Prob+ ". <br><br>&nbsp&nbsp&nbspАстрогация астероида " +AsteroidName2+ ": <br>&nbsp&nbsp&nbsp&nbsp&nbsp• расстояние — " +Аs2Dist+ " млрд км ("+ (100*Аs2Dist/max_TravelLength).toFixed(0) +"%);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• потребуется " +ShipFuelTempExpences2+ " тонн топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• размер — " +Аs2Size+ " км в радиусе;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• зарегистрировано аномалий: " +Аs2Prob+ ".");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Полёт к " +AsteroidName1+ "' onclick='flightToAsteroid1()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к " +AsteroidName2+ "' onclick='flightToAsteroid2()'>");
+		buttonBarUpdate();
+		
+		if (PlayerInRedZone == true) {
+			imageBarUpdateImg = ("img/tlwa/StarSkyGreenZone.png");
+		} else if (PlayerInYellowZone == true) {
+			imageBarUpdateImg = ("img/tlwa/StarSkyYellowZone.png");
+		} else {
+			imageBarUpdateImg = ("img/tlwa/StarSkyGreenZone.png");
+		}
+		
+		imageBarUpdate();
+	}
+
+	function flightToAsteroid1() {
+		АsDistTotal = Аs1Dist;
+		АsSizeTotal = Аs1Size;
+		АsProbTotal = Аs1Prob;
+		AsteroidNameChosen = AsteroidName1;
+					
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspUSE отправилась в полёт по выбранным координатам.<br><br>&nbsp&nbsp&nbspТебя ждёт " +(АsDistTotal / SpeedCoefficient).toFixed(0)+ " лет тишины и темноты по пути к астероиду " +AsteroidNameChosen+ ".");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Полёт' onclick='flightEvents()'>");
+		buttonBarUpdate();
+	}
+	
+	function flightToAsteroid2() {
+		АsDistTotal = Аs2Dist;
+		АsSizeTotal = Аs2Size;
+		АsProbTotal = Аs2Prob;
+		AsteroidNameChosen = AsteroidName2;
+					
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbspUSE отправилась в полёт по выбранным координатам.<br><br>&nbsp&nbsp&nbspТебя ждёт " +(АsDistTotal / SpeedCoefficient).toFixed(0)+ " лет тишины и темноты по пути к астероиду " +AsteroidNameChosen+ ".");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='Полёт' onclick='flightEvents()'>");
+		buttonBarUpdate();
+	}
+	
+	function flightEvents() { // РАСХОДЫ НА ПОЛЁТ, ЗАТЕМ СМЕРТЬ, НИЧЕГО ИЛИ СОБЫТИЕ
+		// высчитываем расход топлива за каждый километр отдельно, округляем в самом конце, проигрываем, если топливо кончилось, не забываем менять вес корабля
+			for (var i5 = 1; i5 <= АsDistTotal; i5++) {
+		
+				if (ShipFuel <= 0) {
+					ShipFuel = 0;
+					break;
+				} else {
+					ShipFuel = ShipFuel - ((1/35)*(ShipWeight/100));
+					ShipWeight = parseInt(ShipFuel) + 10;
+					TravelLength = parseInt(TravelLength) + 1;
+				}
+			}
+		
+			// два раза меняем зону сложности
+			
+			if (PlayerInYellowZone == false && TravelLength >= YellowZone) {
+				PlayerInYellowZone = true;
+				ObjectMatrix[0].push("Пустошь, ресурсов нет."); // увеличиваем вероятность появления пустошей
+				ProblemMatrix[1].push(40, 50); // увеличиваем вероятность срабатывания аномалий
+				DifficultyModifier = 10; // увеличиваем вероятность появления аномалий
+			} else if (PlayerInRedZone == false && TravelLength >= RedZone) {
+				PlayerInRedZone = true;
+				ObjectMatrix[0].push("Пустошь, ресурсов нет.");
+				ProblemMatrix[1].push(40, 50); 
+				DifficultyModifier = 20; 
+			}
+			
+			
+
+		
+			// изменение числа лет полёта в игре, + перед величиной жёстко преобразует её в число из текста
+			ShipWeight = ShipWeight.toFixed(0);
+			ShipFuel = ShipFuel.toFixed(0);
+			TravelYears = +TravelYears + +(АsDistTotal / SpeedCoefficient).toFixed(0); 
+			
+			// ИЗНОС ОБОРУДОВАНИЯ И КОРПУСА
+			ShipHull = ShipHull - (АsDistTotal/300).toFixed(0) - (parseInt(getRandomInt(3, 5))); 
+			ShipEquip = ShipEquip - parseInt(getRandomInt(1, 3));
+			
+			// КОНЕЦ ИГРЫ, ЕСЛИ КОНЧИЛИСЬ РЕСУРСЫ
+			if (ShipFuel <= 0) {
+				ShipFuel = 0;
+				DeadMessage = "Топливо закончилось и была потеряна возможность корректировать курс.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+		
+			else if (ShipEquip <= 0) {
+				ShipEquip = 0;
+				DeadMessage = "Оборудование корабля пришло в негодность.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+		
+			else if (ShipHull <= 0) {
+				ShipHull = 0;
+				ShipEquip = 0;
+				DeadMessage = "Защитный корпус корабля разрушен. Из-за этого оборудование корабля вскоре пришло в негодность.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+			
+			// ЕСЛИ НЕ КОНЧИЛИСЬ РЕСУРСЫ, ТО ЗАПУСК ГЕНЕРАТОРА СОБЫТИЙ - сделать     +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+			else { // НИЧЕГО НЕ ПРОИЗОШЛО
+				// алерты молчания и тишины если нет событий - тоже сделать разными, чтоб текст не приедался
+				// сделать массив случайных фраз в полете и удалять из него фразы, которые были (если их много напишу), либо просто крутить по кругу (если мало) или перезаписывать массив, как только он опустеет
+				
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspЭто был долгий полёт в одиночестве, ничем не прерванный.<br><br>&nbsp&nbsp&nbspМного-много лет молчания.");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
+				buttonBarUpdate();
+	
+			}
+		
+			// АПДЕЙТ СТАТУСА
+			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
+			statusBarUpdate();
+			journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
+			journeyBarUpdate();
+	}
+		
+	function flightIsEndYouAreDead() {
+		// сюда счетчики достижений вставить  +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+		
+		actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" +DeadMessage+ " Ценнейший груз, который несла USE, никогда не будет доставлен по назначению.<br><br><em>Нажми PrtSc, выбери социальную сеть и нажми Ctrl+V, чтобы поделится с друзьями своим результатом.</em>");
+		actionBarUpdate();
+		buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuMainWithRestartMusic()'>");
+		buttonBarUpdate();
+		imageBarUpdateImg = ("img/tlwa/cogsplosion.png");
+		imageBarUpdate();
+		musicBarUpdateFile = ("<audio controls autoplay><source src='music/crk_-_02_-_Fallout.mp3' type='audio/mpeg'></audio>");
+		musicBarUpdate();
+		
+		// вставить ссылку на игру в этот скрин и кнопки шаринга, чтоб могли найти  +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+	}
+	
+	function flightIsEndYouAreWin() { // ДОДЕЛАТЬ
+	//	actionBarUpdateText = ("&nbsp&nbsp&nbspВ процессе игры ты будешь совершать перелёты между астероидами.<br>&nbsp&nbsp&nbspОни отличаются дальностью (это затраты топлива), размером (это потенциальная добыча) и наличием в них аномалий (это повреждения корабля).<br>&nbsp&nbsp&nbspПрибыв к астероиду, ты можешь добыть ресурсы, а затем ты корректируешь курс и летишь дальше.<br>&nbsp&nbsp&nbspУ тебя есть 4 параметра: <br>&nbsp&nbsp&nbsp&nbsp&nbsp• масса; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• запас топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• прочность корпуса; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• сохранность оборудования. <br>&nbsp&nbsp&nbspЕсли топливо закончится, полностью разрушится корпус или оборудование, то твоя миссия завершится неудачей. <br><br> <center><input type='button' value='Дальше' onclick='menuTutorialTwo()'></center>");
+	//	actionBarUpdate();
+	//  buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuMainWithRestartMusic()'>");
+	//	buttonBarUpdate();
+	//	imageBarUpdateImg = ("img/tlwa/read.png");
+	//	imageBarUpdate();
+		musicBarUpdateFile = ("<audio controls autoplay><source src='music/Ketsa_-_Set.mp3' type='audio/mpeg'></audio>");
+		musicBarUpdate();
+	}  
+	
+	function generateObjects() {
+	
+			// ГЕНЕРАТОР ОСЛОЖНЕНИЙ
+				
+			Anomaly = []; // обнуляем
+			
+			if (АsProbTotal == 1) {
+				var AnomalyNameRand = Math.floor(Math.random() * ProblemMatrix[0].length);
+				var AnomalyChanceRand = Math.floor(Math.random() * ProblemMatrix[1].length);
+				var AnomalyDamageRand = Math.floor(Math.random() * ProblemMatrix[2].length);
+		
+				Anomaly.push(ProblemMatrix[0][AnomalyNameRand]);
+				Anomaly.push(ProblemMatrix[1][AnomalyChanceRand]);
+				Anomaly.push(ProblemMatrix[2][AnomalyDamageRand]);
+			} else {
+				Anomaly = ["отсутствует", 0, 0, "здесь&nbspотносительно&nbspбезопасно", 0];
+			}
+		
+			if (Anomaly[0] == "значительная гравитация" || Anomaly[0] == "высокая скорость вращения") {
+				Anomaly.push("вероятность затратить больше топлива при посадке к объекту");
+				Anomaly.push("топлива");
+			} 
+			else if (Anomaly[0] == "ресурсы глубокого залегания") {
+				Anomaly.push("вероятность затратить больше топлива при добыче ресурсов");
+				Anomaly.push("топлива");
+			} 
+			else if (Anomaly[0] == "химически-активный грунт" || Anomaly[0] == "свита мелких астероидов" || Anomaly[0] == "искривленная поверхность") {
+				Anomaly.push("вероятность повредить корпус при посадке к объекту");
+				Anomaly.push("корпуса");
+			} 
+				
+			// ГЕНЕРАТОР ОБЪЕКТОВ
+			
+			Object1 = []; // обнуляем
+			Object2 = [];
+			Object3 = [];
+			Object4 = [];
+		
+			// перебором достать по одному из матрицы столько объектов, каков размер астероида
+			// цикл работает до тех пор, пока выполняется условие i<=АsSizeTotal (условие продолжения)
+			for (var i6 = 1; i6 <= АsSizeTotal; i6++) { // генерим до 4 объектов, i = 1 чтобы считать не с нуля, иначе при  АsSizeTotal=4 у нас будет 5 объектов
+		
+				var ObjectNameRand = Math.floor(Math.random() * ObjectMatrix[0].length);
+				var ObjectSimplicityRand = Math.floor(Math.random() * ObjectMatrix[1].length);
+				var ObjectRichRand = Math.floor(Math.random() * ObjectMatrix[2].length);
+					
+				if (Object1.length == 0) { // записываем в пустые массивы до 4 объектов
+					Object1.push(ObjectMatrix[0][ObjectNameRand]); // а если у нас Пустошь, то ObjectSimplicity = 0
+					
+					if (Object1[0] == "Пустошь, ресурсов нет.") {
+						Object1.push(0);
+						Object1.push(0);
+						Object1.push("Пустошь");
+					}
+					else {
+						Object1.push(ObjectMatrix[1][ObjectSimplicityRand]);
+						Object1.push(ObjectMatrix[2][ObjectRichRand]);
+							if (Object1[0] == "Ледник, ресурсы есть.") {
+								Object1.push("Ледник");
+							} else if (Object1[0] == "Жила, ресурсы есть.") {
+								Object1.push("Жила");
+							}
+					}
+				}
+				
+				else if (Object2.length == 0) { 
+					Object2.push(ObjectMatrix[0][ObjectNameRand]);
+					if (Object2[0] == "Пустошь, ресурсов нет.") {
+						Object2.push(0);
+						Object2.push(0);
+						Object2.push("Пустошь");
+					}
+					else {
+						Object2.push(ObjectMatrix[1][ObjectSimplicityRand]);
+						Object2.push(ObjectMatrix[2][ObjectRichRand]);
+							if (Object2[0] == "Ледник, ресурсы есть.") {
+								Object2.push("Ледник");
+							} else if (Object2[0] == "Жила, ресурсы есть.") {
+								Object2.push("Жила");
+							}
+					}
+				}
+				
+				else if (Object3.length == 0) { 
+					Object3.push(ObjectMatrix[0][ObjectNameRand]);
+					if (Object3[0] == "Пустошь, ресурсов нет.") {
+						Object3.push(0);
+						Object3.push(0);
+						Object3.push("Пустошь");
+					}
+					else {
+						Object3.push(ObjectMatrix[1][ObjectSimplicityRand]);
+						Object3.push(ObjectMatrix[2][ObjectRichRand]);
+							if (Object3[0] == "Ледник, ресурсы есть.") {
+								Object3.push("Ледник");
+							} else if (Object3[0] == "Жила, ресурсы есть.") {
+								Object3.push("Жила");
+							}
+					}
+				}
+				
+				else if (Object4.length == 0) { 
+					Object4.push(ObjectMatrix[0][ObjectNameRand]);
+					if (Object4[0] == "Пустошь, ресурсов нет.") {
+						Object4.push(0);
+						Object4.push(0);
+						Object4.push("Пустошь");
+					}
+					else {
+						Object4.push(ObjectMatrix[1][ObjectSimplicityRand]);
+						Object4.push(ObjectMatrix[2][ObjectRichRand]);
+							if (Object4[0] == "Ледник, ресурсы есть.") {
+								Object4.push("Ледник");
+							} else if (Object4[0] == "Жила, ресурсы есть.") {
+								Object4.push("Жила");
+							}
+					}
+				}
+			}
+				
+		choosingObjects(); // автопереход на следующий экран
+		
+	}
+	
+	function choosingObjects() {
+	
+		imageBarUpdateImg = ("img/tlwa/asteroid.png");
+		imageBarUpdate();
+		
+		// КОНЕЦ ИГРЫ, ЕСЛИ КОНЧИЛИСЬ РЕСУРСЫ после очередного этапа добычи
+		
+			if (ShipFuel <= 0) {
+				ShipFuel = 0;
+				DeadMessage = "Топливо закончилось и была потеряна возможность корректировать курс.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspКорабль не смог покинуть безжизненную поверхность астероида " +AsteroidNameChosen+ "...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+		
+			else if (ShipEquip <= 0) {
+				ShipEquip = 0;
+				DeadMessage = "Оборудование корабля пришло в негодность.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspКорабль не смог покинуть безжизненную поверхность астероида " +AsteroidNameChosen+ "...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+		
+			else if (ShipHull <= 0) {
+				ShipHull = 0;
+				ShipEquip = 0;
+				DeadMessage = "Защитный корпус корабля разрушен. Из-за этого оборудование корабля вскоре пришло в негодность.";
+				actionBarUpdateText = ("<br>&nbsp&nbsp&nbspКорабль не смог покинуть безжизненную поверхность астероида " +AsteroidNameChosen+ "...");
+				actionBarUpdate();
+				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				buttonBarUpdate();
+			}
+				
+		// ИГРОК ВЫБИРАЕТ ОБЪЕКТ ДЛЯ ДОБЫЧИ ИЛИ УЛЕТАЕТ
+		// показания гравиметра бла бла нажми бла бла крошечный малый большой огромный +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!! +++ !!!
+		
+				if (Object1.length == 0) {
+					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Здесь ничего нет, кроме космической пыли.");
+					actionBarUpdate();
+					buttonBarUpdateText = ("<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					buttonBarUpdate();
+				}
+ 				
+ 				else if (Object2.length == 0) {
+					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объект астероида:<br>1. " +Object1[0]);
+					actionBarUpdate();
+					buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					buttonBarUpdate();
+ 				}
+ 				
+ 				else if (Object3.length == 0) {
+					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]);
+					actionBarUpdate();
+					buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					buttonBarUpdate();
+ 				}
+ 				
+ 				else if (Object4.length == 0) {
+					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]+ "<br>3. " +Object3[0]);
+					actionBarUpdate();
+					buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object3[3] + "' onclick='miningObject3()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					buttonBarUpdate();
+ 				}
+				
+				else {
+					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]+ "<br>3. " +Object3[0]+ "<br>4. " +Object4[0]);
+					actionBarUpdate();
+					buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object3[3] + "' onclick='miningObject3()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object4[3] + "' onclick='miningObject4()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					buttonBarUpdate();
+				}
+	}
+	
+	function miningObject1() {
+	ObjSelection = 1;
+	miningChosenObject();
+	}
+	
+	function miningObject2() {
+	ObjSelection = 2;
+	miningChosenObject();
+	}
+	
+	function miningObject3() { 
+	ObjSelection = 3;
+	miningChosenObject();
+	}
+	
+	function miningObject4() {
+	ObjSelection = 4;
+	miningChosenObject();
+	}
+	
+	function anomalyCausesDamage() {
+		var ChanceOfAnomalyDamage = 0;
+		var ShipEquipDamage = 0; // доп урон оборуд
+	
+							// потери из-за аномалии
+							ChanceOfAnomalyDamage = parseInt(getRandomInt(1, 100));
+							if (ChanceOfAnomalyDamage <= Anomaly[1]) {
+								if (Anomaly[4] == "топлива") {
+									ShipFuel = parseInt(ShipFuel) - parseInt(Anomaly[2]);
+									AlertText = "&nbsp&nbsp&nbspПри посадке потеряно " +Anomaly[2]+ " тонн топлива.<br><br>";
+								} else if (Anomaly[4] == "корпуса") {
+									ShipHull = parseInt(ShipHull) - parseInt(Anomaly[2]);
+									AlertText = "&nbsp&nbsp&nbspПри посадке был поврежден корпус на " +Anomaly[2]+ "%.<br><br>";
+									ShipEquipDamage = parseInt(getRandomInt(0, 2));
+									if (ShipEquipDamage !== 0); {
+										ShipEquip = ShipEquip - ShipEquipDamage;
+										AlertText = "&nbsp&nbsp&nbspПри посадке был поврежден корпус на " +Anomaly[2]+ "% и оборудование на " +ShipEquipDamage+ "%.<br><br>";
+									}
+								}
+							}
+							else {
+							AlertText = "&nbsp&nbsp&nbspПовреждений и потерь топлива удалось избежать.<br><br>";
+							}
+	}
+	
+	function miningChosenObject() {
+	
+				var AnomalyDamageRand = Math.floor(Math.random() * ProblemMatrix[2].length); // !!!!!!!!после! успешной добычи перебрасываем величину урона Аномалии
+				Anomaly[2] = ProblemMatrix[2][AnomalyDamageRand];
+				
+				var NewMiningAttempt = 0; // попытка
+				var NewMiningAttemptExpenses = 0; // расходы на эту конкретную попытку внутри попытки
+				var TotalAttemptExpenses = 0; // расходы на все попытки внутри попытки
+				var ShipHullOld = ShipHull; // для отчетов
+					
+				if (ObjSelection == 1) { // нажали 1
+					
+						if (Object1[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
+							actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
+							buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
+						}
+						else {
+							for (; Object1[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикл не нужен - процесс добычи
+							
+								NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
+								NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
+								TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
+							}	
+							
+							anomalyCausesDamage();
+							
+							if (Object1[0] == "Ледник, ресурсы есть.") { // Ледник? - вознаграждение
+								Object1[0] = "Пустошь, ресурсов нет.";
+								Object1[3] = "Пустошь";
+								ShipFuel = parseInt(ShipFuel) + parseInt(Object1[2]);
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object1[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							} else { //  значит жила
+								Object1[0] = "Пустошь, ресурсов нет.";
+								Object1[3] = "Пустошь";
+								ShipHullOld = ShipHull;
+								ShipHull = parseInt(ShipHull) + parseInt(Object1[2]);
+								if (ShipHull >= 100) {
+									ShipHull = 100;
+								}
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							}
+						
+						actionBarUpdateText = (AlertText + SuccessfulMiningText);
+						buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
+						}
+				 
+				}
+		
+				else if (ObjSelection == 2) { // если игрок нажал цифру 2, то проверяем есть ли объект 2 (добыча) или его нет (улетаем)
+					
+						if (Object2[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
+							actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
+							buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
+						}
+						else {
+							for (; Object2[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикл не нужен
+							
+								NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
+								NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
+								TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
+							}	
+							
+							anomalyCausesDamage();
+							
+							if (Object2[0] == "Ледник, ресурсы есть.") { // Ледник?
+								Object2[0] = "Пустошь, ресурсов нет.";
+								Object2[3] = "Пустошь";
+								ShipFuel = parseInt(ShipFuel) + parseInt(Object2[2]);
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object2[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							} else { //  значит жила
+								Object2[0] = "Пустошь, ресурсов нет.";
+								Object2[3] = "Пустошь";
+								ShipHullOld = ShipHull;
+								ShipHull = parseInt(ShipHull) + parseInt(Object2[2]);
+								if (ShipHull >= 100) {
+									ShipHull = 100;
+								}
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							}
+						
+						actionBarUpdateText = (AlertText + SuccessfulMiningText);
+						buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
+						}
+					
+				}
+		
+				else if (ObjSelection == 3) {
+					
+						if (Object3[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
+							actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
+							buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
+						}
+						else {
+							for (; Object3[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикл не нужен
+							
+								NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
+								NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
+								TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
+							}	
+							
+							anomalyCausesDamage();
+							
+							if (Object3[0] == "Ледник, ресурсы есть.") { // Ледник?
+								Object3[0] = "Пустошь, ресурсов нет.";
+								Object3[3] = "Пустошь";
+								ShipFuel = parseInt(ShipFuel) + parseInt(Object3[2]);
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object3[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							} else { //  значит жила
+								Object3[0] = "Пустошь, ресурсов нет.";
+								Object3[3] = "Пустошь";
+								ShipHullOld = ShipHull;
+								ShipHull = parseInt(ShipHull) + parseInt(Object3[2]);
+								if (ShipHull >= 100) {
+									ShipHull = 100;
+								}
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							}
+						
+						actionBarUpdateText = (AlertText + SuccessfulMiningText);
+						buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
+						}
+					
+				}
+		
+				else if (ObjSelection == 4) {
+					
+						if (Object4[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
+							actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
+							buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
+						}
+						else {
+							for (; Object4[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикл не нужен
+							
+								NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
+								NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
+								TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
+							}	
+							
+							anomalyCausesDamage();
+							
+							if (Object4[0] == "Ледник, ресурсы есть.") { // Ледник?
+								Object4[0] = "Пустошь, ресурсов нет.";
+								Object4[3] = "Пустошь";
+								ShipFuel = parseInt(ShipFuel) + parseInt(Object4[2]);
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object4[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							} else { //  значит жила
+								Object4[0] = "Пустошь, ресурсов нет.";
+								Object4[3] = "Пустошь";
+								ShipHullOld = ShipHull;
+								ShipHull = parseInt(ShipHull) + parseInt(Object4[2]);
+								if (ShipHull >= 100) {
+									ShipHull = 100;
+								}
+								SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
+								ShipEquip = ShipEquip - 1; // оборудование изнашивается
+							}
+							
+						actionBarUpdateText = (AlertText + SuccessfulMiningText);
+						buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
+						}
+					
+				}
+				
+		buttonBarUpdate();
+		actionBarUpdate();
+		statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
+		statusBarUpdate();		
+	}
+	
+		// ИНТЕРФЕЙС
+		
+		var statusBarUpdateText = "";
+		var journeyBarUpdateText = "";
+		var actionBarUpdateText = "";
+		var imageBarUpdateImg = "background.png";
+		var musicBarUpdateFile = "<audio controls autoplay><source src='music/P_C_III_-_01_-_Exit_Exit.mp3' type='audio/mpeg'></audio>";
+		var buttonBarUpdateText = "";
+		
+		// ОСНОВНЫЕ ПЕРЕМЕННЫЕ
+
+		const min_TravelLength = 39924; // расстояние до Проксимы Центавра, млрд км
+		const max_TravelLength = 41248; // расстояние до Альфы Центавра, Астры и Бейкера, млрд км
+		const SpeedCoefficient = 4.1248; // млрд км за год
+		const LastJump = 3150; // млрд км до Альфы
+
+		const GreenZone = 0; // первая треть пути
+		const YellowZone = 13749 // вторая треть пути
+		const RedZone = 27499 // третья треть пути
+		
+		const NumberOfProximaCentauriPlanets = 1;
+		const NumberOfAstraCentauriPlanets = 3;
+		const NumberOfBakerCentauriPlanets = 4;
+		const NumberOfSolarPlanets = 4;
+		
+		var PlayerInYellowZone = false;
+		var PlayerInRedZone = false;
+		var DifficultyModifier = 0;
+		
+		var ShipFuel = 150; // запас топлива, восстанавливается
+		var ShipHull = 100; // прочность корпуса, восстанавливается
+		var ShipEquip = 100; // сохранность оборудования, не восстанавливается
+		var ShipWeight = parseInt(ShipFuel) + 10; // масса корабля, топливо + конструкция ракеты и ценнейший груз 15т
+
+		// СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ
+
+		var Аs1Dist = 0; // дистанция до 1-ого астероида
+		var Аs1Size = 0; // размер 1-ого астероида
+		var Аs1Prob = 0; // сложность 1-ого астероида
+
+		var Аs2Dist = 0; // дистанция до 2-ого астероида
+		var Аs2Size = 0; // размер 2-ого астероида
+		var Аs2Prob = 0; // сложность 2-ого астероида
+
+		var AsDistTotal = 0 // дистанция выбранного астероида
+		var АsSizeTotal = 0 // размер выбранного астероида
+		var АsProbTotal = 0 // сложность выбранного астероида
+
+		var TravelLength = 0; // суммарно пройденный в игре путь, млрд км
+		var TravelYears = 0; // время в игре, лет
+
+		var AstSelection = 0;  
+		var ObjSelection = 0;  
+		var MenuSelection = 0;
+
+		var АsDistTotal = 0;
+		var	АsSizeTotal = 0;
+		var АsProbTotal = 0;
+
+		var DeadMessage = ""; // причина проигрыша
+		var AlertText = ""; // повреждения от аномалии
+		var SuccessfulMiningText = ""; // что добыли
+		
+		//  ГЕНЕРАТОР АСТЕРОИДОВ
+		
+		var AsteroidNameGenerator = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"];
+		var AsteroidNameLength1 = 0;
+		var AsteroidNameLength2 = 0;
+		var AsteroidName1 = "";
+		var AsteroidName2 = "";
+		var AsteroidNameChosen = "Forgotten";
+		
+		var ShipFuelTempExpences1 = 0; // расход топлива на прыжок к первому астероиду
+		var ShipFuelTempExpences2 = 0; // расход топлива на прыжок ко второму астероиду
+		
+		var ProblemMatrix = [
+			["значительная гравитация", "ресурсы глубокого залегания", "свита мелких астероидов", "искривленная поверхность", "высокая скорость вращения", "химически-активный грунт"], // названия проблем, ряд 0
+			[10, 20, 20, 30], // вероятность повреждения, ряд 1
+			[1, 2, 2, 3, 3, 3, 4, 4, 5] // размер штрафа, ряд 2
+			];
+			
+		var Anomaly = []; 
+		
+		var ObjectMatrix = [
+			["Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Жила, ресурсы есть.", "Пустошь, ресурсов нет."], // объекты и добываемый ресурс, ряд 0
+			[50, 40, 30, 20, 10], // вероятность неуспешного бурения, ряд 1
+			[10, 15, 15, 20, 20, 20, 25, 25, 30], // размер добычи, ряд 2
+			];
+				
+		var Object1 = []; // задаем имеющиеся четыре пустых массива для будущих объектов
+		var Object2 = [];
+		var Object3 = [];
+		var Object4 = [];
+		
+		// ГЕНЕРАТОР ПЛАНЕТ
+		
+		var CentauriPlanetMatrix = [
+			["Проксима I", "Астра I", "Астра II", "Астра III", "Бейкер I", "Бейкер II", "Бейкер III", "Бейкер IV"], 	// PlanetName [0]
+			["Cold", "Cold", "Warm", "Warm", "Warm", "Hot", "Hot", "Hot"], 												// TemperatureRegime [1] жара RED 0-2 2-3 4-3 GREY 4 2 0
+			["Lifeless", "Lifeless", "Lifeless", "Mosses", "Mosses", "Forests", "Forests", "Forests"], 					// OrganicPresence [2] наличие органики GREEN 0-3 2-2 4-3 GREY 4 2 0
+			["Dry", "Dry", "Dry", "Humid", "Humid", "Flood", "Flood", "Flood"] 											// WaterSaturation [3] насыщенность водой BLUE 0-3 2-2 4-3 GREY 4 2 0
+			];
+			
+		var ProximaPlanetPreparedMatrix = [];
+		var AstraPlanetPreparedMatrix = [];
+		var BakerPlanetPreparedMatrix = [];
+		
+		var SolarPlanetPreparedMatrix = [
+		["Меркурий", "Hot", "Lifeless", "Dry"],
+		["Венера", "Hot", "Mosses", "Humid"],
+		["Земля", "Warm", "Forests", "Flood"],
+		["Марс", "Cold", "Mosses", "Dry"]
+		];
+		
+		var SpectralAnalysisResult = []; // массив одной планеты с "графикой"
+
+</script>
+</body>
+</html>
+
+
