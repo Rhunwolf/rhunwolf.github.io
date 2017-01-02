@@ -12,9 +12,7 @@
 			}   
 		</style>
 	</head>
-				
-	<body onload="menuMainWithRestartMusic()">
-
+	<body onload="menuMainStartNewGame()"> 
 	<TABLE BORDER="0" WIDTH="100%" HEIGHT="100%">
 		<TR HEIGHT="20">
 			<TD align="right">
@@ -30,6 +28,11 @@
 						</TD>
 						<TD WIDTH="232" HEIGHT="128" BGCOLOR="#FFFAFA">
 							<div id="statusBar" style="height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left"><!-- id=statusBar --></div>
+							<div id="statusBar" style="height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left">
+							    <div id="gameInfo" style="display:block;height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left">COOL GAME!!!</div>
+							    <div id="shipStatus" style="display:none;height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left">Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: <span id="fuelStatus">0<span> тонн; <br>   • Корпус: <span id="hullStatus">0<span>%; <br>   • Оборудование: <span id="equipStatus">0<span>%.</div>
+							</div>
+
 						</TD>
 						<TD WIDTH="280" HEIGHT="128" BGCOLOR="#FFFAFA">
 							<div id="journeyBar" style="height:115px; border: 2px solid #CCC; padding: 12px 10px 0px; font-size:11pt; color:#444444" align="left"><!-- id=journeyBar --></div>
@@ -60,334 +63,840 @@
 			</TD>
 		</TR>
 	</TABLE>
-
 	<script type="text/javascript">
 			/*
-			
-			Автор игры Дима Тэлэри https://vk.com/rhunwolf
+		Автор игры Дима Тэлэри https://vk.com/rhunwolf
 		Эта игра сделана как первое упраженине в программировании вообще, поэтому здесь будет очень много комментариев и местами неоптимальный код, не обращайте внимания ;)
-			
-		TODO	
-		
-			// провести рефакторинг
-			// https://ru.wikipedia.org/wiki/%D0%9A%D0%BE%D0%B4_%D1%81_%D0%B7%D0%B0%D0%BF%D0%B0%D1%88%D0%BA%D0%BE%D0%BC
-			// https://learn.javascript.ru/coding-style
-			
-				для flightIsEndYouAreDead и Win-скрина вывести счетчики - сколько астероидов посещено, сколько ресурсов добыто и пр. + соцкнопки
-				TravelLength
-				TravelYears
-				TotalCountFuelSpent
-				TotalCountAsteroidsVisited
-				TotalCountObjectsMined
-				
-	сделать новый граф игры, отвечающий реалиям
-	
-	причесать тексты, они то от третьего лица, то от первого
-			
-	в некоторых функциях сделать ветвление и использовать сложные условия || &&
-	
-	ИСПОЛЬЗОВАТЬ return - когда нужно только один ответ получить, чтоб не множить лишних переменных
-
-	задать стили для шрифта, чтоб в других браузерах не расползались
-
-	проверить мою игру во всех браузерах - поставить все браузеры
-
-	разнести функции на служебные, меню и сцены
-	
-	заменить повторяющиеся однотипные куски кода на маленькие удобные функции, ввести маленькие вспомогательные функции везде где только можно
-
-	вместо кучи переменных можно хранить данные в массивах!! внести все-все-все текстовые сообщения в многомерные массивы
-
-	встроить кнопки соцсетей
-
-	подсветка важного текста в интерфейсе в сообщениях
-
-	события с выбором, сюжет и\или починка оборудования
-
-	сделать визуальные прогресс-бары для корпуса, оборудования и топлива
-
-	смена изображений астероидов в зависимости от их типа и размера
-	
-	финальная проверка оборудования и проигрыш, если оборудование сломано
-
-	внести ключи в массивы
-	Ключом ассоциативного массива может быть любая строка, которая ассоциируется с конкретным элементом массова. Например, для массива:
-	var man = {
-	lastname: "Иванов",
-	firstname: "Василий",
-	middlename: "Петрович"
-	}
-	man - имя массива
-	lastname, firstname и middlename - ключи массива
-	Иванов, Василий, Петрович - значения элементов массива
-	По ключу можно обратиться к конкретному элементу.
-	
-	в функцию choosingObjects
-	показания гравиметра бла бла нажми бла бла крошечный малый большой огромный астероид
-	
-	в функцию generateAsteroids
-	надо сделать цикл, если количество астероидов у нас плавающее, сейчас фикс 2 астероида, а надо сделать от 1 до 3
-
-				в функцию flightEvents
-				// ЕСЛИ НЕ КОНЧИЛИСЬ РЕСУРСЫ, ТО ЗАПУСК ГЕНЕРАТОРА СОБЫТИЙ
-				// тексты молчания и тишины если нет событий - тоже сделать разными, чтоб текст не приедался
-				// сделать массив случайных фраз в полете и удалять из него фразы, которые были, перезаписывать массив, как только он опустеет
-				// генератор событий в пути, возможность сказать да-нет
-				// после события оно удаляется из массива
-				// события зависят от пройденного расстояния
-				// событие генерируется случайно + при преодолении времени и расстояния
-				// 5-10 событий за один полёт, не более (соответственно у всех, кроме проксимы и взрыва солнца - не 100% вероятность)
-				// в зависимости от длины пройденного пути по пути происходят разные события и воспоминания USE
-				// в начале пути Земля подсказывает, что делать, затем связь обрывается
-				// 10.000 лет пути, солнце взрывается в первые два года пути, далее шаги идут примерно по 200 лет игра проходится за 50 ходов
-				// переключение в более сложный режим по пути следования (удаляем из массивов объектов и астероидов хорошие значения)
-				// событие - половина пути от земли
-				// событие - еще видно юпитер и сатурн - добрый знак
-				// случайные хорошие и плохие события по пути, зависящие от запаса ресурсов (наказывать богачей, помогать беднякам) и от пройденного пути
-				// агония при 5 и менее % оборудования
-				// тексты из рассказа
-				// воспоминания
-				// полом оборудование
-				// прилетел к Проксиме Центавра
-				// повышение сложности
-				// водородное облако
-				// молекулярная туманность
-				// вспышка сверхновой вдалеке
-				// в первом прыжке ты отбрасываешь ракету-носитель для преодоления гравитации
-				// ионный шторм от далекой ..., и ты видишь радуги и огни святого эльма от взмд его с мангнитной защитой 
-				// ты пролетел такую-то степень двойки
-				// ты перестал различать планеты в солн системе
-				// я сейчас лечу (от точки старта) дольше, чем одомашнили огонь или изобрели пиьменность
-				// мой ХХХ день рождения
-				// половина пути 
-
+		TODOLIST https://docs.google.com/document/d/1rpOwWv9KP3oyCCd7M7uI6qTbsBDkN5Oiv6SxTRmfDxc/edit
 			*/
-
-			// СЛУЖЕБНЫЕ
+					
+			// ПЕРЕМЕННЫЕ
 			
-		function imageBarUpdate() {
-			document.getElementById("imageBar").src = (imageBarUpdateImg);
-		}
-
-		function actionBarUpdate() {
-			document.getElementById("actionBar").innerHTML = (actionBarUpdateText);
-		}
-
-		function statusBarUpdate() {
-			document.getElementById("statusBar").innerHTML = (statusBarUpdateText);
-		}
-		
-		function journeyBarUpdate() {
-			document.getElementById("journeyBar").innerHTML = (journeyBarUpdateText);
-		}
-		
-		function buttonBarUpdate() {
-			document.getElementById("buttonBar").innerHTML = (buttonBarUpdateText);
-		}
-		
-		function musicBarUpdate() {
-			document.getElementById("musicBar").innerHTML = (musicBarUpdateFile);
-		}
+			const maxTravelLength = 41248; 			// расстояние до Альфы Центавра, Астры и Бейкера, среднее, млрд км
+			var ship = null;						// объект корабль
+			var Asteroid1 = null;					// объект астероид1
+			var Asteroid2 = null;					// объект астероид2
+			var AsteroidChosen = null;				// объект выбранный астероид
+			var systemsOfPlanet = null;				// объект системы планет Центавра
+			<!-- var unseenEvents = null;				// объект событий  --> сделать
+			<!-- var allTexts = null;					// объект всех текстов --> сделать
+			
+			var EventWasShown01 = false;
+			var EventWasShown02 = false;
+			var EventWasShown03 = false;
+			var EventWasShown04 = false;
 
 		function getRandomInt(min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min; // генератор случайного числа с заданными границами включительно
 		}
-			
-			// МЕНЮ
 		
-		function menuMainWithRestartMusic() { 
-			// запуск главного меню с перезапуском музыки
-			musicBarUpdateFile = ("<audio controls autoplay loop><source src='music/P_C_III_-_01_-_Exit_Exit_cut.mp3' type='audio/mpeg'></audio>");
-			musicBarUpdate();
-			menuMain();
-//			debugBarUpdate(); // отладочная панель
+		// ИЗМЕНЕНИЯ ОКОН
 			
+		function updateImageBar(img) {
+			document.getElementById("imageBar").src = (img);
+		}
 
+		function updateActionBar(text) {
+			document.getElementById("actionBar").innerHTML = (text);
+		}
+
+		function updateStatusBar(text) {
+			document.getElementById("statusBar").innerHTML = (text);
 		}
 		
-		function menuMain() {
+		function updateJourneyBar(text) {
+			document.getElementById("journeyBar").innerHTML = (text);
+		}
 		
-			ShipFuel = 150; // обнуляем статус, т.к. игрок может перезапустить игру, не перезапуская окно
-			ShipHull = 100; 
-			ShipEquip = 100; 
-			ShipWeight = +ShipFuel + 10; 
-			TravelLength = 0;
-			TravelYears = 0;
-			ShipStillAlive = true;
-			PlayerInYellowZone = false;
-			PlayerInRedZone = false;
-			DifficultyModifier = 0;
-			TotalCountFuelSpent = 0;
-			TotalCountAsteroidsVisited = 0;
-			TotalCountObjectsMined = 0;
+		function updateButtonBar(text) {
+			document.getElementById("buttonBar").innerHTML = (text);
+		}
+		
+		function updateMusicBar(file) {
+			document.getElementById("musicBar").innerHTML = (file);
+		}
+
+		// ГЕНЕРАТОР ОБЪЕКТА КОРАБЛЬ
+		
+		function Ship() {
+			this.fuel = 150;					// запас топлива, восстанавливается
+			this.hull = 100;					// прочность корпуса, восстанавливается
+			this.equip = 100;					// сохранность оборудования, не восстанавливается
+			this.mass = this.fuel + 10;			// масса корабля: топливо + конструкция ракеты и ценнейший груз 10-15т
+			this.causeOfDeath = "";				// причина гибели
+			this.pointOfDeath = "";				// место гибели
+			this.travelLength = 0;				// пробег корабля, млрд км
+			this.travelYears = 0;				// пробег корабля, лет
+			this.inYellowZone = false;
+			this.inRedZone = false;
+			this.zoneDifficulty = 0;
+			this.countFuelSpent = 0;			// счётчик потраченного топлива
+			this.countAsteroidsVisited = 0;		// счётчик посещенных астероидов
+			this.countObjectsMined = 0;			// счётчик разработанных месторождений
+		}
+
+		Ship.prototype.isAlive = function() { 	// проверка, жив ли
+				if (this.fuel <= 0) {
+					this.fuel = 0;
+					if (this.hull <= 0) { 		// есть вероятность, что одновременно меньше нуля станет и топливо и корпус
+						this.hull = 0;
+						this.equip = 0;
+					}
+					this.causeOfDeath = "Топливо закончилось и была потеряна возможность корректировать курс.";
+					return false;
+				} 
 				
-			ProblemMatrix = [
-				["значительная гравитация", "ресурсы глубокого залегания", "свита мелких астероидов", "искривленная поверхность", "высокая скорость вращения", "химически-активный грунт"], // названия проблем, ряд 0
-				[10, 20, 20, 30], 
-				[1, 2, 2, 3, 3, 3, 4, 4, 5] 
-				];
+				if (this.hull <= 0) {
+					this.hull = 0;
+					this.equip = 0;
+					this.causeOfDeath = "Защитный корпус корабля разрушен. Из-за этого оборудование корабля вскоре пришло в негодность.";
+					return false;
+				}
 				
-			ObjectMatrix = [
-				["Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Жила, ресурсы есть.", "Пустошь, ресурсов нет."], 
-				[50, 40, 30, 20, 10], 
-				[10, 15, 15, 20, 20, 20, 25, 25, 30] 
-				];
+				if (this.equip <= 0) {
+					this.equip = 0;
+					this.causeOfDeath = "Оборудование корабля пришло в негодность.";
+					return false;
+				}
+		        return true;
+		}
+		
+		Ship.prototype.fuelNeedToFlight = function(exampleDistance) {	// предполагаем, сколько потребуется топлива на прыжок
+			
+			var fuelTemp = this.fuel;
+			var massTemp = this.mass;
 					
-			CentauriPlanetMatrix = [
-				["Проксима I", "Астра I", "Астра II", "Астра III", "Бейкер I", "Бейкер II", "Бейкер III", "Бейкер IV"], 	
-				["Cold", "Cold", "Warm", "Warm", "Warm", "Hot", "Hot", "Hot"], 												
-				["Lifeless", "Lifeless", "Lifeless", "Mosses", "Mosses", "Forests", "Forests", "Forests"], 					
-				["Dry", "Dry", "Dry", "Humid", "Humid", "Flood", "Flood", "Flood"] 											
-				];
+			for (var i = 1; i <= exampleDistance; i++) {				// предполагаем расход топлива за каждый километр отдельно
+				fuelTemp -= ((1/35)*(massTemp/100));
+				massTemp = fuelTemp + 10;
+			}
+			
+			fuelTemp = Math.round(fuelTemp); 			
+			return this.fuel - fuelTemp;								// return расчёт
+		}	
+
+		Ship.prototype.flyEachKilometer = function(exampleDistance) { 	// расход топлива, износ корабля
+		
+				for (var i = 1; i <= exampleDistance; i++) { 			// вычитаем расход топлива за каждый километр отдельно, округляем в самом конце, меняем вес корабля
+			
+					if (this.fuel <= 0) {
+						this.fuel = 0;
+						break;
+					} else {
+						this.fuel -= ((1/35)*(this.mass/100));
+						this.mass = this.fuel + 10;
+						this.travelLength++;
+					}
+				}
+
+				this.fuel = Math.round(this.fuel);
+				this.mass = Math.round(this.mass);
+				this.travelYears += Math.round(exampleDistance / (maxTravelLength / 10000)); // изменение числа лет полёта в игре
 				
-			ProximaPlanetPreparedMatrix = [];
-			AstraPlanetPreparedMatrix = [];
-			BakerPlanetPreparedMatrix = [];
+//				if (exampleDistance > 1) {					// износ оборудования и корпуса, только если пройдена дистанция более 1 миллиарда километров
+					this.damageHull(Math.round(exampleDistance/300) + getRandomInt(3, 5)); 
+					this.damageEquip(getRandomInt(1, 3));
+//				}
+		}
+
+		Ship.prototype.damageEquip = function(amount) { // урон корпусу
+			this.equip -= amount;
+			if (this.equip <= 0) {
+				this.equip = 0;
+			}
+		}
+		
+		Ship.prototype.damageHull = function(amount) { // урон корпусу
+			this.hull -= amount;
+			if (this.hull <= 0) {
+				this.hull = 0;
+			}
+		}
+
+		Ship.prototype.repairHull = function(amount) { // починка корпуса
+			this.hull += amount;
+			if (this.hull >= 100) {
+				this.hull = 100;
+			}
+		}
+
+		Ship.prototype.spendFuel = function(amount) { // потратить топливо
+			this.fuel -= amount;
+			if (this.fuel <= 0) {
+				this.fuel = 0;
+			}
+			this.mass = this.fuel + 10;
+		}
+
+		Ship.prototype.refuel = function(amount) { // заправить топливом
+			this.fuel += amount;
+			this.mass = this.fuel + 10;
+		}
+
+		Ship.prototype.displayStatus = function() {
+		    return "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +this.fuel+ " тонн; <br>   • Корпус: " +this.hull+ "%; <br>   • Оборудование: " +this.equip+ "%.";
+		}
+
+		// ГЕНЕРАТОР ОБЪЕКТА АСТЕРОИД
+		
+		function generateAsteroid() {
+		
+		    var ast = {
+			  name: "A-",
+			  dist: 0,
+			  prob: 0,
+			  size: 0,
+			  fuelRequired: 0, // расход топлива на прыжок к первому астероиду
+			  fields: [],
+			  anomaly: []
+			};
 			
-			LivablePlanet = 0;
+			var matrixOfFields = [
+				["Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Жила, ресурсы есть.", "Пустошь, ресурсов нет."], 
+				[50, 40, 30, 20, 10], // вероятность неуспешной добычи
+				[10, 15, 15, 20, 20, 20, 25, 25, 30] // размер добычи
+			];
+
+			var matrixOfAnomalies = [
+				["значительная гравитация", "ресурсы глубокого залегания", "свита мелких астероидов", "искривленная поверхность", "высокая скорость вращения", "химически-активный грунт"], // названия проблем, ряд 0
+				[10, 20, 20, 30], 			// вероятность срабатывания аномалии
+				[2, 3, 3, 4, 4, 4, 5, 5, 6] // максимально возможный урон от аномалии
+			];
 			
+			// проверяем зону сложности, если Yellow или Red - то увеличиваем вероятности плохих происшествий
+				
+			if (ship.inYellowZone) {
+				matrixOfFields[0].push("Пустошь, ресурсов нет."); 	// увеличиваем вероятность появления пустошей
+				matrixOfAnomalies[1].push(40, 50); 					// увеличиваем вероятность срабатывания аномалий
+			} 
+			
+			if (ship.inRedZone) {
+				matrixOfFields[0].push("Пустошь, ресурсов нет.");
+				matrixOfAnomalies[1].push(60, 70); 
+			}
+			
+			var nameLength = getRandomInt(4, 7);
+			
+			var AsteroidNameGenerator = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"];
+			
+			for (var i = 1; i <= nameLength; i++) {
+			    var RandArray = Math.floor(Math.random() * AsteroidNameGenerator.length);
+				ast.name = ast.name + (AsteroidNameGenerator[RandArray]).toString();
+			}
+			
+			var NewDist = getRandomInt(1, 100);
+			var NewProb = getRandomInt(1, 100);
+			var NewSize = getRandomInt(1, 100);
+			
+			// генерация дистанции до астероида
+			if (NewDist >= 81) {
+				ast.dist = 1825 + getRandomInt(0, 400);
+			} else if (NewDist >= 51) {  				// 5,0% расстояния 2063 вероятность 20%
+				ast.dist = 1425 + getRandomInt(0, 400);
+			} else if (NewDist >= 21) { 				// 4,0% расстояния 1650 вероятность 30%
+				ast.dist = 1025 + getRandomInt(0, 400);
+			} else { 									// 3,0% расстояния 1238 вероятность 30%
+				ast.dist = 625 + getRandomInt(0, 400);
+			} 											// 2,0% расстояния 825, 1% это 412,5, 0,5% это 206 вероятность 20%
+
+			// генерация сложности астероида
+			if (NewProb >= 51 - ship.zoneDifficulty) {
+				ast.prob = 1; 
+			} else {
+				ast.prob = 0; 
+			}
+
+			// генерация размера астероида
+			if (NewSize >= 91) {
+				ast.size = 4; 
+			} else if (NewSize >= 71) {
+				ast.size = 3; 
+			} else if (NewSize >= 31) {
+				ast.size = 2; 
+			} else if (NewSize >= 11) {
+				ast.size = 1; 
+			} else {
+				ast.size = 0;
+				ast.prob = 0; 
+			}
+						
+			ast.fuelRequired = ship.fuelNeedToFlight(ast.dist);
+	
+			tempAnomaly = []; // временная аномалия, для приравнивания к массиву ast.anomaly
+				
+			if (ast.prob == 1) {
+				var anomalyNameRand = Math.floor(Math.random() * matrixOfAnomalies[0].length);
+				var anomalyChanceRand = Math.floor(Math.random() * matrixOfAnomalies[1].length);
+				var anomalyDamageRand = Math.floor(Math.random() * matrixOfAnomalies[2].length);
+			
+				tempAnomaly.push(matrixOfAnomalies[0][anomalyNameRand]);
+				tempAnomaly.push(matrixOfAnomalies[1][anomalyChanceRand]);
+				tempAnomaly.push(matrixOfAnomalies[2][anomalyDamageRand]);
+		
+			} else {
+				tempAnomaly = ["отсутствует", 0, 0, "здесь&nbspотносительно&nbspбезопасно", 0];
+			}
+			
+			if (tempAnomaly[0] == "значительная гравитация" || tempAnomaly[0] == "высокая скорость вращения") {
+				tempAnomaly.push("вероятность затратить больше топлива при посадке к месторождению");
+				tempAnomaly.push("топлива");
+			} 
+			else if (tempAnomaly[0] == "ресурсы глубокого залегания") {
+				tempAnomaly.push("вероятность затратить больше топлива при добыче ресурсов");
+				tempAnomaly.push("топлива");
+			} 
+			else if (tempAnomaly[0] == "химически-активный грунт" || tempAnomaly[0] == "свита мелких астероидов" || tempAnomaly[0] == "искривленная поверхность") {
+				tempAnomaly.push("вероятность повредить корпус при посадке к месторождению");
+				tempAnomaly.push("корпуса");
+			}
+
+			ast.anomaly = tempAnomaly;
+	
+			// перебором достать по одному из матрицы столько месторождений, каков размер астероида
+			// цикл работает до тех пор, пока выполняется условие i <= ast.size (условие продолжения)
+			// записываем в пустой массив tempField инфу по этому месторождению, затем до 4 таких месторождений в матрицу ast.fields
+	
+			for (var i = 1; i <= ast.size; i++) { // генерим до 4 объектов, i = 1 чтобы считать не с нуля, иначе при  ast.size = 4 у нас будет 5 объектов
+				
+				var tempField = []; // временное месторождение, для пуша в матрицу ast.fields
+				var fieldNameRand = Math.floor(Math.random() * matrixOfFields[0].length);
+				var fieldSimplicityRand = Math.floor(Math.random() * matrixOfFields[1].length);
+				var fieldRichRand = Math.floor(Math.random() * matrixOfFields[2].length);
+				
+				tempField.push(matrixOfFields[0][fieldNameRand]); // а если у нас Пустошь, то fieldSimplicityRand и fieldRichRand = 0
+						
+				if (tempField[0] == "Пустошь, ресурсов нет.") {
+					tempField.push(0);
+					tempField.push(0);
+					tempField.push("Пустошь");
+				}
+				else {
+					tempField.push(matrixOfFields[1][fieldSimplicityRand]);
+					tempField.push(matrixOfFields[2][fieldRichRand]);
+					if (tempField[0] == "Ледник, ресурсы есть.") {
+						tempField.push("Ледник");
+					} else if (tempField[0] == "Жила, ресурсы есть.") {
+						tempField.push("Жила");
+					}
+				}
+				
+				ast.fields.push(tempField);
+			}
+
+		    return ast;
+		}
+
+		// ГЕНЕРАТОР ОБЪЕКТА СИСТЕМЫ ЦЕНТАВРА
+		
+		function generateSystemsOfPlanet() {
+		
+			var preparedCentauriSistems = {
+				planetsOfProxima: [],
+				planetsOfAstra: [],
+				planetsOfBaker: [],
+				point: 0,
+				planetChosen: []
+			}
+			
+			var matrixOfCentauriPlanets = [
+					["Проксима I", "Астра I", "Астра II", "Астра III", "Бейкер I", "Бейкер II", "Бейкер III", "Бейкер IV"], 	// planetName [0]
+					["Cold", "Cold", "Warm", "Warm", "Warm", "Hot", "Hot", "Hot"], 												// planetTemperature [1] жара RED COLD
+					["Lifeless", "Lifeless", "Lifeless", "Mosses", "Mosses", "Forests", "Forests", "Forests"], 					// planetOrganic [2] наличие органики GREEN GREY
+					["Dry", "Dry", "Dry", "Humid", "Humid", "Flood", "Flood", "Flood"] 											// planetWater [3] насыщенность водой BLUE SAND
+			];
+			
+			var tempCentauriSistems = []; // "перевалочный" массив
+				
+				// генерирует случайную планету из массива, потом удаляет использованные значения
+				// у нас прегенеренное число планет (8), и такое же число значений в каждой строке matrixOfCentauriPlanets
+				
+			for (var i = 0; i <= 7; i++) { // получаем матрицу, строки - планеты, столбцы - название, температурный режим, жизнь, сухость, пригодность для жизни
+				var tempPlanet = [];
+					
+				var planetName = Math.floor(Math.random() * matrixOfCentauriPlanets[0].length);
+				var planetTemperature = Math.floor(Math.random() * matrixOfCentauriPlanets[1].length);
+				var planetOrganic = Math.floor(Math.random() * matrixOfCentauriPlanets[2].length);
+				var planetWater = Math.floor(Math.random() * matrixOfCentauriPlanets[3].length);
+				var planetLiveable = 0;
+				
+				tempPlanet.push(matrixOfCentauriPlanets[0][planetName]); // записываем в матрицу tempPlanet
+				matrixOfCentauriPlanets[0].splice (planetName,1); // удаляем записанное из матрицы matrixOfCentauriPlanets
+				
+				tempPlanet.push(matrixOfCentauriPlanets[1][planetTemperature]);
+				matrixOfCentauriPlanets[1].splice (planetTemperature,1);
+				
+				tempPlanet.push(matrixOfCentauriPlanets[2][planetOrganic]);
+				matrixOfCentauriPlanets[2].splice (planetOrganic,1);
+					
+				tempPlanet.push(matrixOfCentauriPlanets[3][planetWater]);
+				matrixOfCentauriPlanets[3].splice (planetWater,1);
+					
+					if (tempPlanet[1] == "Cold") { // оцениваем пригодность для жизни у получившейся планеты, результат от 0 до 6
+						planetLiveable += 1;
+					} else if (tempPlanet[1] == "Warm") {
+						planetLiveable += 2;
+					} else if (tempPlanet[1] == "Hot") {
+						planetLiveable += 1;
+					}
+						
+					if (tempPlanet[2] == "Lifeless") { 
+						planetLiveable -= 1; 					// минус!
+					} else if (tempPlanet[2] == "Mosses") {
+						planetLiveable += 1;
+					} else if (tempPlanet[2] == "Forests") {
+						planetLiveable += 2;
+					}
+						
+					if (tempPlanet[3] == "Dry") { 
+						planetLiveable += 0;
+					} else if (tempPlanet[3] == "Humid") {
+						planetLiveable += 1;
+					} else if (tempPlanet[3] == "Flood") {
+						planetLiveable += 2;
+					}
+					
+				tempPlanet.push(planetLiveable)  
+				tempCentauriSistems.push(tempPlanet); // записываем получившуюся планету в матрицу, повторяем это еще 7 раз
+			}
+				
+			tempCentauriSistems.sort(function(a, b) { return a[0] == b[0] ? a > b : a[0] > b[0] }); // сортировка по первому столбцу 
+				
+			for (var i = 0; i <= 7; i++) { // разделяем общую матрицу на три отдельных
+				
+				if (tempCentauriSistems[i][0] == "Проксима I") {
+					preparedCentauriSistems.planetsOfProxima.push(tempCentauriSistems[i]);
+				} else if (tempCentauriSistems[i][0] == "Астра I" || tempCentauriSistems[i][0] == "Астра II" || tempCentauriSistems[i][0] == "Астра III") {
+					preparedCentauriSistems.planetsOfAstra.push(tempCentauriSistems[i]);
+				} else if (tempCentauriSistems[i][0] == "Бейкер I" || tempCentauriSistems[i][0] == "Бейкер II" || tempCentauriSistems[i][0] == "Бейкер III" || tempCentauriSistems[i][0] == "Бейкер IV") {
+					preparedCentauriSistems.planetsOfBaker.push(tempCentauriSistems[i]);
+				}
+			}
+			
+			return preparedCentauriSistems;
+		}			
+		
+		// ОБЪЕКТ МАССИВ СОБЫТИЙ
+		
+	/*
 			EventWasShown01 = false;
 			EventWasShown02 = false;
 			EventWasShown03 = false;
 			EventWasShown04 = false;
+	*/
+
+		// ОБЪЕКТ МАССИВ ТЕКСТОВ
+		
+		
+		// МЕНЮ		
+		
+		function menuMainStartNewGame() { // запуск главного меню с перезапуском музыки и перегенерацией всего
+			updateMusicBar("<audio controls autoplay loop><source src='music/P_C_III_-_01_-_Exit_Exit_cut.mp3' type='audio/mpeg'></audio>");
 			
-			statusBarUpdateText = ("<center><br><strong><font style='font-size:18pt;' color='#444444'>The Longest<br>Way Alone<br>ver. 0.2</font></strong></center>");
-			statusBarUpdate();
-			journeyBarUpdateText = ("<br><font style='font-size:12pt;' color='#444444'>&nbsp&nbsp&nbspПроцедурно-генерируемая браузерная игра по мотивам рассказа Вернора&nbspВинджа ''Дальний&nbspприцел''.</font><br>");
-			journeyBarUpdate();
-			actionBarUpdateText = ("<center><br><br><br><br><br><br> <input type='button' value='Новая игра' onclick='menuNewGame()'> </center>");
-			actionBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/TWLALOGO.png");
-			imageBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Обучение' onclick='menuTutorialGeneral();'> &nbsp&nbsp&nbsp <input type='button' value='О создателях' onclick='menuCredits()'>");
-			buttonBarUpdate();
+			updateDebugBar(); // отладочная панель, НЕ УДАЛЯТЬ
+
+			ship = new Ship(); // обнуляем статус, т.к. игрок может перезапустить игру, не перезапуская окно
+			systemsOfPlanet = generateSystemsOfPlanet();							// создаем 8 планет
+			menuMainWithoutRestartGame();
+		}
+		
+		function menuMainWithoutRestartGame() {
+			updateStatusBar("<center><br><strong><font style='font-size:18pt;' color='#444444'>The Longest<br>Way Alone<br>ver. 0.2</font></strong></center>");
+			updateJourneyBar("<br><font style='font-size:12pt;' color='#444444'>&nbsp&nbsp&nbspПроцедурно-генерируемая браузерная игра по мотивам рассказа Вернора&nbspВинджа ''Дальний&nbspприцел''.</font><br>");
+			updateActionBar("<center><br><br><br><br><br><br> <input type='button' value='Новая игра' onclick='menuNewGame()'> </center>");
+			updateImageBar("img/tlwa/TWLALOGO.png");
+			updateButtonBar("<input type='button' value='Обучение' onclick='menuTutorialGeneral();'> &nbsp&nbsp&nbsp <input type='button' value='О создателях' onclick='menuCredits()'>");
 		}
 			
 		function menuTutorialGeneral() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspТвоя миссия — достичь системы Альфа Центавра. По пути тебе нужно будет:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• следить за <b>состоянием корабля</b>, вовремя добывая ресуры;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• выбирать наиболее богатые и безопасные <b>астероиды для добычи</b>;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• по прибытии провести <b>спектральный анализ</b> и выбрать наиболее подходящую планету земного типа.<br><br>&nbsp&nbsp&nbspАккуратно балансируй между тратой топлива и добычей ресурсов, и ты сможешь достигнуть точки назначения, преодолев 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфа Центавра.");
-			actionBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/read.png");
-			imageBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Параметры корабля' onclick='menuTutorialShipStatus()'>&nbsp&nbsp&nbsp<input type='button' value='Добыча ресурсов' onclick='menuTutorialAsteroids()'>&nbsp&nbsp&nbsp<input type='button' value='Анализ планет' onclick='menuTutorialSpectralAnalysis()'>&nbsp&nbsp&nbsp<input type='button' value='В меню' onclick='menuMain()'>&nbsp&nbsp&nbsp");
-			buttonBarUpdate();
+			updateActionBar("<br>&nbsp&nbsp&nbspТвоя миссия — достичь системы Альфы Центавра. По пути тебе нужно будет:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• следить за <b>состоянием корабля</b>, вовремя добывая ресуры;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• выбирать наиболее богатые и безопасные <b>астероиды для добычи</b>;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• по прибытии провести <b>спектральный анализ</b> и выбрать наиболее подходящую планету земного типа.<br><br>&nbsp&nbsp&nbspАккуратно балансируй между тратой топлива и добычей ресурсов, и ты сможешь достигнуть точки назначения, преодолев 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфы Центавра.");
+			updateImageBar("img/tlwa/read.png");
+			updateButtonBar("<input type='button' value='Параметры корабля' onclick='menuTutorialShipStatus()'>&nbsp&nbsp&nbsp<input type='button' value='Добыча ресурсов' onclick='menuTutorialAsteroids()'>&nbsp&nbsp&nbsp<input type='button' value='Анализ планет' onclick='menuTutorialSpectralAnalysis()'>&nbsp&nbsp&nbsp<input type='button' value='В меню' onclick='menuMainWithoutRestartGame()'>&nbsp&nbsp&nbsp");
 		}  
 		
 		function menuTutorialShipStatus() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspУ тебя есть 4 основных параметра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• масса и запас топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• прочность корпуса и сохранность оборудования.<br><br>&nbsp&nbsp&nbsp<b>Топливо</b> расходуется на полёт и добычу ресурсов. Чем меньше твоя <b>масса</b>, тем ты меньше тратишь топлива при движении.<br>&nbsp&nbsp&nbsp<b>Корпус</b> и <b>оборудование</b> разрушаются в процессе полета и от аномалий. Корпус можно восстанавливать.<br>&nbsp&nbsp&nbspЕсли один из параметров упадет до нуля, то твоя миссия завершится неудачей.");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
-			buttonBarUpdate();
-		} 
-		
-		function menuTutorialAsteroids() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspВ процессе игры ты будешь совершать перелёты между астероидами. Они отличаются:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>дальностью</b> (затраты топлива и % пройденного пути);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>размером</b> (потенциальное богатство ресурсами);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• наличием в них <b>аномалии</b> (повреждение корабля при добыче ресурсов).<br><br>&nbsp&nbsp&nbspПрибыв к астероиду, ты можешь добыть ресурсы и &frasl; или лететь дальше.<br>&nbsp&nbsp&nbspВ леднике можно добыть водород для <b>топлива</b>, в жиле — металлы для починки <b>корпуса</b>.");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
-			buttonBarUpdate();
-		} 
-		
-		function menuTutorialSpectralAnalysis() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПеред тем, как ты покинешь Солнечную систему, тебе нужно попрактиковаться в спектральном анализе. Сравни планеты нашей системы и запомни, чем отличается Земля от остальных планет.<br><br><div id='PlanetBoxInActionBar' align='right'>Меркурий:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Венера:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Земля:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Марс:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div>");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Провести анализ' onclick='doAnalysisSolar()'>&nbsp&nbsp&nbsp<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
-			buttonBarUpdate();
-		} 
-		
-		function menuCredits() {
-			actionBarUpdateText = ("<center><font style='font-size:12pt;' color='#444444'>Над игрой работали:</font></center><br>&nbsp&nbsp&nbsp<strong>Дмитрий Тэлэри</strong> — геймдизайн, программирование<br>&nbsp&nbsp&nbsp<strong>Светлана Михина</strong> — графика, тестирование<br><br><center><font style='font-size:12pt;' color='#444444'>Благодарности:</center><br>&nbsp&nbsp&nbsp<strong>Леонид Галкин</strong> — за помощь с html.<br>&nbsp&nbsp&nbsp<strong>Вернор Виндж</strong> — за то, что пишет <a href='https://goo.gl/cwGDWx' target='_blank'>книги</a>.<br>&nbsp&nbsp&nbsp<strong>Альфа Центавра</strong> — просто за то, что ты <a href='https://goo.gl/wn2I4w' target='_blank'>есть</a>.<br>&nbsp&nbsp&nbspИллюстрации авторства <b>Delapouite</b>, <b>Lorc</b> и <b>Skoll</b><br>(лицензия CC BY 3.0 <a href='http://game-icons.net/' target='_blank'>game-icons.net</a>).<br>&nbsp&nbsp&nbspМузыка авторства <b>P C III</b>, <b>.crk</b> и <b>Ketsa</b><br>(лицензия CC BY 3.0 <a href='http://freemusicarchive.org/' target='_blank'>freemusicarchive.org</a>).<br>&nbsp&nbsp&nbspИгра сделана после прохождения на портале <a href='https://geekbrains.ru/' target='_blank'>geekbrains.ru</a> курса ''Основы программирования''. </font>");
-			actionBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/power-generator.png");
-			imageBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuMain()'>");
-			buttonBarUpdate();
+			updateActionBar("<br>&nbsp&nbsp&nbspУ тебя есть 4 основных параметра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• масса и запас топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• прочность корпуса и сохранность оборудования.<br><br>&nbsp&nbsp&nbsp<b>Топливо</b> расходуется на полёт и добычу ресурсов. Чем меньше твоя <b>масса</b>, тем ты меньше тратишь топлива при движении.<br>&nbsp&nbsp&nbsp<b>Корпус</b> и <b>оборудование</b> разрушаются в процессе полета и от аномалий. Корпус можно восстанавливать.<br>&nbsp&nbsp&nbspЕсли один из параметров упадет до нуля, то твоя миссия завершится неудачей.");
+			updateButtonBar("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
 		}
 		
-			// ИГРА
+		function menuTutorialAsteroids() {
+			updateActionBar("<br>&nbsp&nbsp&nbspВ процессе игры ты будешь совершать перелёты между астероидами. Они отличаются:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>дальностью</b> (затраты топлива и % пройденного пути);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <b>размером</b> (потенциальное богатство ресурсами);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• наличием в них <b>аномалии</b> (повреждение корабля при добыче ресурсов).<br><br>&nbsp&nbsp&nbspПрибыв к астероиду, ты можешь добыть ресурсы и &frasl; или лететь дальше.<br>&nbsp&nbsp&nbspВ леднике можно добыть водород для <b>топлива</b>, в жиле — металлы для починки <b>корпуса</b>.");
+			updateButtonBar("<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
+		}
+		
+		function menuTutorialSpectralAnalysis() {
+			updateActionBar("<br>&nbsp&nbsp&nbspПеред тем, как ты покинешь Солнечную систему, тебе нужно попрактиковаться в спектральном анализе. Сравни планеты нашей системы и запомни, чем отличается Земля от остальных планет.<br><br><div id='PlanetBoxInActionBar' align='right'>Меркурий:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Венера:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Земля:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>Марс:&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div>");
+			updateButtonBar("<input type='button' value='Провести анализ' onclick='doAnalysisSolar()'>&nbsp&nbsp&nbsp<input type='button' value='Назад' onclick='menuTutorialGeneral()'>");
+		}
+		
+		function menuCredits() {
+			updateActionBar("<center><font style='font-size:12pt;' color='#444444'>Над игрой работали:</font></center><br>&nbsp&nbsp&nbsp<strong>Дмитрий Тэлэри</strong> — геймдизайн, программирование<br>&nbsp&nbsp&nbsp<strong>Светлана Михина</strong> — графика, тестирование<br><br><center><font style='font-size:12pt;' color='#444444'>Благодарности:</center><br>&nbsp&nbsp&nbsp<strong>Сергей Болгов</strong> — помощь с рефакторингом.<br>&nbsp&nbsp&nbsp<strong>Леонид Галкин</strong> — помощь с html.<br>&nbsp&nbsp&nbsp<strong>Вернор Виндж</strong> — за то, что пишет <a href='https://goo.gl/cwGDWx' target='_blank'>книги</a>.<br>&nbsp&nbsp&nbsp<strong>Альфа Центавра</strong> — просто за то, что ты <a href='https://goo.gl/wn2I4w' target='_blank'>есть</a>.<br>&nbsp&nbsp&nbspИллюстрации авторства <b>Delapouite</b>, <b>Lorc</b> и <b>Skoll</b><br>(лицензия CC BY 3.0 <a href='http://game-icons.net/' target='_blank'>game-icons.net</a>).<br>&nbsp&nbsp&nbspМузыка авторства <b>P C III</b>, <b>.crk</b> и <b>Ketsa</b><br>(лицензия CC BY 3.0 <a href='http://freemusicarchive.org/' target='_blank'>freemusicarchive.org</a>).<br>&nbsp&nbsp&nbspИгра сделана после прохождения на портале <a href='https://geekbrains.ru/' target='_blank'>geekbrains.ru</a> курса ''Основы программирования''. </font>");
+			updateImageBar("img/tlwa/power-generator.png");
+			updateButtonBar("<input type='button' value='В меню' onclick='menuMainWithoutRestartGame()'>");
+		}
+		
+		function menuCreditsNewGame() {
+			updateActionBar("<center><font style='font-size:12pt;' color='#444444'>Над игрой работали:</font></center><br>&nbsp&nbsp&nbsp<strong>Дмитрий Тэлэри</strong> — геймдизайн, программирование<br>&nbsp&nbsp&nbsp<strong>Светлана Михина</strong> — графика, тестирование<br><br><center><font style='font-size:12pt;' color='#444444'>Благодарности:</center><br>&nbsp&nbsp&nbsp<strong>Сергей Болгов</strong> — помощь с рефакторингом.<br>&nbsp&nbsp&nbsp<strong>Леонид Галкин</strong> — помощь с html.<br>&nbsp&nbsp&nbsp<strong>Вернор Виндж</strong> — за то, что пишет <a href='https://goo.gl/cwGDWx' target='_blank'>книги</a>.<br>&nbsp&nbsp&nbsp<strong>Альфа Центавра</strong> — просто за то, что ты <a href='https://goo.gl/wn2I4w' target='_blank'>есть</a>.<br>&nbsp&nbsp&nbspИллюстрации авторства <b>Delapouite</b>, <b>Lorc</b> и <b>Skoll</b><br>(лицензия CC BY 3.0 <a href='http://game-icons.net/' target='_blank'>game-icons.net</a>).<br>&nbsp&nbsp&nbspМузыка авторства <b>P C III</b>, <b>.crk</b> и <b>Ketsa</b><br>(лицензия CC BY 3.0 <a href='http://freemusicarchive.org/' target='_blank'>freemusicarchive.org</a>).<br>&nbsp&nbsp&nbspИгра сделана после прохождения на портале <a href='https://geekbrains.ru/' target='_blank'>geekbrains.ru</a> курса ''Основы программирования''. </font>");
+			updateImageBar("img/tlwa/power-generator.png");
+			updateButtonBar("<input type='button' value='В меню' onclick='menuMainStartNewGame()'>"); // перезапуск игры
+		}
+		
+			// ПРОЛОГ ИГРЫ
 		
 		function menuNewGame() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspТы — Universe Scientific Expedition.<br><br>&nbsp&nbsp&nbspМы, твои родители, назваем тебя просто USE.<br>&nbsp&nbsp&nbspТы — искусственный разум на борту ракеты S-5N.");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Подготовка к взлёту' onclick='menuNewGameNext()'>");
-			buttonBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/earth-africa-europe.png");
-			imageBarUpdate();
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
-			journeyBarUpdate();
+			updateActionBar("<br>&nbsp&nbsp&nbspТы — Universe Scientific Expedition.<br><br>&nbsp&nbsp&nbspМы, твои родители, назваем тебя просто USE.<br>&nbsp&nbsp&nbspТы — искусственный разум на борту ракеты S-5N.");
+			updateButtonBar("<input type='button' value='Подготовка к взлёту' onclick='menuNewGameNext()'>");
+			updateImageBar("img/tlwa/earth-africa-europe.png");
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км ("+ Math.round(100 * ship.travelLength / maxTravelLength) +"%); <br>   •  осталось: " +(maxTravelLength - ship.travelLength)+ " млрд км.");
 		}
 		
 		function menuNewGameNext() {
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspМы создали тебя с единственной, но очень важной задачей — прибыть в систему Альфа Центавра. Найти там подходящую планету и доставить на неё твой груз.<br>&nbsp&nbsp&nbspТебе нужно преодолеть 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфа Центавра.<br>&nbsp&nbsp&nbspUSE, всё человечество надеется на тебя. Не подведи нас!<br>&nbsp&nbsp&nbspМы желаем тебе успешного путешествия!");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='На взлёт!' onclick='menuNewGameNextNext()'>");
-			buttonBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/rocket-thruster.png");
-			imageBarUpdate();
+			updateActionBar("<br>&nbsp&nbsp&nbspМы создали тебя с единственной, но очень важной задачей — прибыть в систему Альфы Центавра. Найти там подходящую планету и доставить на неё твой груз.<br>&nbsp&nbsp&nbspТебе нужно преодолеть 41248 миллиардов километров космоса, отделяющих Солнце от системы Альфы Центавра.<br>&nbsp&nbsp&nbspUSE, всё человечество надеется на тебя. Не подведи нас!<br>&nbsp&nbsp&nbspМы желаем тебе успешного путешествия!");
+			updateButtonBar("<input type='button' value='На взлёт!' onclick='menuNewGameNextNext()'>");
+			updateImageBar("img/tlwa/rocket-thruster.png");
 		}
 
 		function menuNewGameNextNext() {
-			ShipFuel = ShipFuel - parseInt(getRandomInt(25, 50));								 // потрачено топлива при взлёте с Земли
-			
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			actionBarUpdateText = ("<br><br>&nbsp&nbsp&nbspUSE, твой очень долгий путь в одиночестве начинается...");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Покинуть систему' onclick='generateAsteroids()'>");
-			buttonBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/solar-system.png");
-			imageBarUpdate();
+			ship.spendFuel(getRandomInt(25, 50));								 // потрачено топлива при взлёте с Земли
+			ship.damageHull(getRandomInt(1, 10));
+			ship.damageEquip(getRandomInt(1, 3));
+			updateStatusBar(ship.displayStatus());
+			updateActionBar("<br><br>&nbsp&nbsp&nbspUSE, твой очень долгий путь в одиночестве начинается...");
+			updateButtonBar("<input type='button' value='Покинуть систему' onclick='generateAsteroids()'>");
+			updateImageBar("img/tlwa/solar-system.png");
 		}
 		
-		function planetRandomizer() {
+			// ИГРА, ЧАСТЬ ПЕРВАЯ: АСТЕРОИДЫ И СОБЫТИЯ
 		
-			var TotalNumberOfPlanets = +NumberOfProximaCentauriPlanets + +NumberOfAstraCentauriPlanets + +NumberOfBakerCentauriPlanets;
-			var TotalCentauriPlanetMatrix = [];
+		function generateAsteroids() {
 			
-			// генерирует случайную планету из массива, потом удаляет использованные значения
+			// проверяем сколько пролетели, если далеко, то меняем зону на Yellow или Red
+			if (!ship.inYellowZone && ship.travelLength >= Math.round(maxTravelLength / 3)) { // 13749 первая треть пути закончена
+				ship.inYellowZone = true;
+				ship.zoneDifficulty = 10; 							// увеличиваем вероятность появления аномалий
+			} else if (!ship.inRedZone && ship.travelLength >= Math.round(2 * maxTravelLength / 3)) { // 27499 вторая треть пути закончена
+				ship.inRedZone = true;
+				ship.zoneDifficulty = 20; 
+			}
 			
-			for (var i7 = 1; i7 <= TotalNumberOfPlanets; i7++) {
-				var TempPlanet = [];
-					
-				var PlanetName = Math.floor(Math.random() * CentauriPlanetMatrix[0].length);
-				var TemperatureRegime = Math.floor(Math.random() * CentauriPlanetMatrix[1].length);
-				var OrganicPresence = Math.floor(Math.random() * CentauriPlanetMatrix[2].length);
-				var WaterSaturation = Math.floor(Math.random() * CentauriPlanetMatrix[3].length);
+			if (ship.inRedZone) {
+				updateImageBar("img/tlwa/StarSkyRedZone.png");
+			} else if (ship.inYellowZone) {
+				updateImageBar("img/tlwa/StarSkyYellowZone.png");
+			} else {
+				updateImageBar("img/tlwa/StarSkyGreenZone.png");
+			}
 			
-				TempPlanet.push(CentauriPlanetMatrix[0][PlanetName]);
-				CentauriPlanetMatrix[0].splice (PlanetName,1);
-			
-				TempPlanet.push(CentauriPlanetMatrix[1][TemperatureRegime]);
-				CentauriPlanetMatrix[1].splice (TemperatureRegime,1);
-			
-				TempPlanet.push(CentauriPlanetMatrix[2][OrganicPresence]);
-				CentauriPlanetMatrix[2].splice (OrganicPresence,1);
+			if (ship.travelLength >= maxTravelLength - 3150) {		// длина последнего прыжка с запасом
+				systemsOfPlanet.point = ship.travelLength;
+				finalTriangleOfStars(); 							// уходим в финал
+			} else {  												// если еще не финал - то генерируем астероиды
+		        Asteroid1 = generateAsteroid();
+		        Asteroid2 = generateAsteroid();
+				updateActionBar("<br>&nbsp&nbsp&nbsp" + describeAsteroid(Asteroid1) + " <br><br>&nbsp&nbsp&nbsp" + describeAsteroid(Asteroid2)); // ИГРОК ВЫБИРАЕТ АСТЕРОИД ДЛЯ ПРЫЖКА
+				updateButtonBar("<input type='button' value='Полёт к " +Asteroid1.name+ "' onclick='flightToAsteroid(Asteroid1)'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к " +Asteroid2.name+ "' onclick='flightToAsteroid(Asteroid2)'>");
+			}
+		}
+		
+		function describeAsteroid(asteroid) {
+		    return "Астрогация астероида " +asteroid.name+ ": <br>&nbsp&nbsp&nbsp&nbsp&nbsp• расстояние — " +asteroid.dist+ " млрд км ("+ Math.round(100*asteroid.dist/maxTravelLength) +"%); <br>&nbsp&nbsp&nbsp&nbsp&nbsp• потребуется " +asteroid.fuelRequired+ " тонн топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• размер — " +asteroid.size+ " км в радиусе;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• зарегистрировано аномалий: " +asteroid.prob+ ".";
+		}
+		
+		function flightToAsteroid(asteroid) { // получаем данные из генератора астероида для корректного отображения
+			AsteroidChosen = asteroid;
+			updateActionBar("<br>&nbsp&nbsp&nbspUSE отправилась в полёт по выбранным координатам.<br><br>&nbsp&nbsp&nbspТебя ждёт " + Math.round(asteroid.dist / (maxTravelLength / 10000)) + " лет тишины и темноты по пути к астероиду " +asteroid.name+ ".");
+			updateButtonBar("<input type='button' value='Полёт' onclick='flightEvents()'>");
+		}
+		
+		function flightEvents() { // РАСХОДЫ НА ПОЛЁТ, ЗАТЕМ СМЕРТЬ, НИЧЕГО ИЛИ СОБЫТИЕ
+			ship.flyEachKilometer(AsteroidChosen.dist);
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км ("+Math.round(100*ship.travelLength/maxTravelLength) +"%); <br>   •  осталось: " +(maxTravelLength - ship.travelLength)+ " млрд км.");
 				
-				TempPlanet.push(CentauriPlanetMatrix[3][WaterSaturation]);
-				CentauriPlanetMatrix[3].splice (WaterSaturation,1);
-			
-				TotalCentauriPlanetMatrix.push(TempPlanet); // получаем матрицу, строки - планеты, столбцы - название, температурный режим, жизнь, сухость
-			}
-			
-			TotalCentauriPlanetMatrix.sort(function(a, b) { return a[0] == b[0] ? a > b : a[0] > b[0] }); // сортировка по первому столбцу
-			
-			for (var i8 = 0; i8 <= TotalNumberOfPlanets - 1; i8++) { // разделяем общую матрицу на три отдельных
-			
-				if (TotalCentauriPlanetMatrix[i8][0] == "Проксима I") {
-					ProximaPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
-				} else if (TotalCentauriPlanetMatrix[i8][0] == "Астра I" || TotalCentauriPlanetMatrix[i8][0] == "Астра II" || TotalCentauriPlanetMatrix[i8][0] == "Астра III") {
-					AstraPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
-				} else if (TotalCentauriPlanetMatrix[i8][0] == "Бейкер I" || TotalCentauriPlanetMatrix[i8][0] == "Бейкер II" || TotalCentauriPlanetMatrix[i8][0] == "Бейкер III" || TotalCentauriPlanetMatrix[i8][0] == "Бейкер IV") {
-					BakerPlanetPreparedMatrix.push(TotalCentauriPlanetMatrix[i8]);
+			if (!ship.isAlive()) {
+				ship.pointOfDeath = "&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность.";
+				updateActionBar(ship.pointOfDeath);
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+	
+<!-- заменить на генератор событий -->
+	
+			} else {
+				if (ship.travelYears >= 2 && !EventWasShown01) {
+					EventWasShown01 = true;
+					updateActionBar("&nbsp&nbsp&nbspНе прошло и двух лет, а USE находилась дальше от Солнца, чем любой из зондов прежде запущенных с Земли. Само Солнце было теперь всего лишь очень яркой звездой, сияющей позади. На то, чтобы задать вопрос с Земли и получить ответ, уходило шестнадцать часов.<br>&nbsp&nbsp&nbspПотом произошло нечто странное. В течение трех недель светимость Солнца неуклонно возрастала, пока оно не засияло в десять раз ярче, чем прежде. На самом деле, не такое уж крупное изменение. Гораздо меньше того, что астрономы Земли называют «вспышкой новой». Тем не менее USE была по-своему озадачена. Она размышляла над этим в течение многих месяцев, поскольку именно в это время потеряла контакт с Землей. Он так никогда и не восстановился.");
+					updateButtonBar("<input type='button' value='Далее' onclick='choosingFields()'>");
+					updateImageBar("img/tlwa/explosion-rays.png");
+				} else if (ship.travelYears >= 1000 && !EventWasShown02) {
+					EventWasShown02 = true;
+					updateActionBar("&nbsp&nbsp&nbspИногда USE оборачивалась, чтобы взглянуть на Солнце. Даже десять веков спустя она все еще могла разглядеть Юпитер и Сатурн. Это был добрый знак.");
+					updateButtonBar("<input type='button' value='Далее' onclick='choosingFields()'>");
+				} else if (ship.travelYears >= 5000 && !EventWasShown03) {
+					EventWasShown03 = true;
+					updateActionBar("&nbsp&nbsp&nbspОни назвали тебя Universe Scientific Expedition. И ты должна стать, наверно, самым долгоживущим из всех земных созданий — и, возможно, последним. Мудрая черепаха может прожить триста лет, остистая сосна — шесть тысяч. Срок жизни USE, предусмотренный твоими создателями, должен был превысить сто веков.<br>&nbsp&nbsp&nbspИ хотя твой мозг состоит из железа и германия, легированного мышьяком, а сердце — из крошечного сгустка водородной плазмы, USE — с самого момента своего появления — ты житель Земли. Ты можешь чувствовать, сомневаться, а также — это ты обнаружишь по прошествии множества темных столетий, предшествовавших твоему концу, — забывать.");
+					updateButtonBar("<input type='button' value='Далее' onclick='choosingFields()'>");
+				} else if (ship.travelYears >= 7500 && !EventWasShown04) {
+					EventWasShown04 = true;
+					updateActionBar("&nbsp&nbsp&nbspUSE обнаружила проблему — самую серьезную, с которой только могла столкнуться. Она забыла цель своей миссии. На протяжении столетий рисунок магнитных полей в ее программируемой памяти мало-помалу стирался, и первыми исчезали программы, которые использовались реже других. USE запросила эти программы, чтобы понять, как отразится уменьшение ее маневренности на ходе миссии — и обнаружила, что понятия не имеет о своей окончательной цели. Воспоминания заканчивались ужасно пострадавшими программами биохимических исследований и входа в атмосферу планеты. Можно было предположить, что после успешного приземления на подходящей планете требовалось сделать нечто очень и очень важное.");
+					updateButtonBar("<input type='button' value='Далее' onclick='choosingFields()'>");
+				} else {
+				
+				choosingFields()
+				
+	//				updateActionBar("<br>&nbsp&nbsp&nbspЭто был долгий полёт в одиночестве, ничем не прерванный.<br><br>&nbsp&nbsp&nbspМного-много лет молчания.");
+	//				updateButtonBar("<input type='button' value='Далее' onclick='choosingFields()'>");
 				}
-			
 			}
-			
 		}
 			
-		function doSpectralAnalysis (array) { 
-			// анализируем массив
-			SpectralAnalysisResult = []; // обнуляем массив
+
+
+		function describeFieldsActionBar() {
+			var tempActionBar = "<br>&nbsp&nbsp&nbspАстероид " +AsteroidChosen.name+ ":<br><br>Аномалия — " +AsteroidChosen.anomaly[0]+ " (" +AsteroidChosen.anomaly[3]+ ").<br><br>Месторождения астероида:";
+			for (i = 0; i + 1 <= AsteroidChosen.fields.length; i++) {
+				tempActionBar += "<br>" + (i + 1) + ". " + AsteroidChosen.fields[i][0];
+			}
+			return tempActionBar;
+		}
+		
+		function describeFieldsButtonBar() {
+			var tempButtonBar = "";
+			for (i = 0; i + 1 <= AsteroidChosen.fields.length; i++) {
+				tempButtonBar += "<input type='button' value='" + AsteroidChosen.fields[i][3] + "' onclick='miningChosenField(" + (i) + ")'>&nbsp&nbsp&nbsp"
+			}
+			tempButtonBar += "<input type='button' value='Улететь' onclick='generateAsteroids()'>";
+			return tempButtonBar;
+		}
+		
+		function choosingFields() {
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км ("+ Math.round(100*ship.travelLength/maxTravelLength) +"%); <br>   •  осталось: " +(maxTravelLength - ship.travelLength)+ " млрд км.");
+
+			if (!ship.isAlive()) {
+				ship.pointOfDeath = "&nbsp&nbsp&nbspКорабль не смог покинуть безжизненную поверхность астероида.";
+				updateActionBar(ship.pointOfDeath);
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+			} else { // игрок выбирает месторождение для добычи или улетает
+				if (AsteroidChosen.size == 0) {
+					updateActionBar("<br>&nbsp&nbsp&nbspАстероид " +AsteroidChosen.name+ ":<br><br>Здесь ничего нет, кроме космической пыли.");
+					updateButtonBar("<input type='button' value='Улететь' onclick='generateAsteroids()'>");
+					updateImageBar("img/tlwa/spill.png");
+				}
+				else {
+					updateActionBar(describeFieldsActionBar());
+					updateButtonBar(describeFieldsButtonBar());
+					updateImageBar("img/tlwa/asteroid.png");
+				}
+			}
+		}
+		
+		function miningChosenField(fieldNumber) {
+		
+			var tempFuel = ship.fuel; // для отчетов
+			var tempHull = ship.hull; // для отчетов
+			var tempEquip = ship.equip; // для отчетов
+			var alertMining = "";
+			var alertExpenses = "";
+			var alertAnomaly = "";
+	
+	// Если это пустошь, то отправляем обратно
+	// Если не пустошь, делаем все остальное
+						
+			if (AsteroidChosen.fields[fieldNumber][0] == "Пустошь, ресурсов нет.") { // пустошь или нет
+				updateActionBar("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
+				updateButtonBar("<input type='button' value='Продолжить' onclick='choosingFields()'>");
+			}
+			else {
+			
+	// Если есть аномалия, то она может повредить корабль
+	// Если аномалии нет, то AsteroidChosen.anomaly[1] == 0
+								
+				if (AsteroidChosen.anomaly[1] >= getRandomInt(1, 100)) {
+					if (AsteroidChosen.anomaly[4] == "топлива") {
+						ship.spendFuel(getRandomInt(1, AsteroidChosen.anomaly[2])); // трата топлива от 1 до максимального урона аномалии
+						alertAnomaly = "&nbsp&nbsp&nbspПри посадке потеряно " +(tempFuel - ship.fuel)+ " тонн топлива.<br><br>";
+						tempFuel = ship.fuel; // новая планка топлива для отчетов
+					} else if (AsteroidChosen.anomaly[4] == "корпуса") {
+						ship.damageHull(getRandomInt(1, AsteroidChosen.anomaly[2]));
+						ship.damageEquip(getRandomInt(0, 2)); 						// и доп урон оборуд
+						alertAnomaly = "&nbsp&nbsp&nbspПри посадке был поврежден корпус на " +(tempHull - ship.hull)+ "% и оборудование на " +(tempEquip - ship.equip)+ "%.<br><br>";
+						tempHull = ship.hull; // новая планка корпуса для отчетов
+					}
+				}
+	
+	// Тратим топливо в попытках добычи
+	
+				do {
+					ship.spendFuel(getRandomInt(1, 2)); // теряем 1-2 топливо при попытке добычи
+				} while (AsteroidChosen.fields[fieldNumber][1] >= getRandomInt(1, 100)) // кидаем 1к100, пытаясь кинуть больше, чем шанс неуспешной добычи
+				alertExpenses = "На добычу потрачено " +(tempFuel - ship.fuel)+ " тонн топлива.";
+					
+	// Получаем заслуженные ресурсы из месторождения
+							
+				if (AsteroidChosen.fields[fieldNumber][3] == "Ледник") { // Ледник?
+					ship.refuel(AsteroidChosen.fields[fieldNumber][2]);
+					alertMining = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +AsteroidChosen.fields[fieldNumber][2]+ " тонн топлива. ";
+				} else if (AsteroidChosen.fields[fieldNumber][3] == "Жила") { // Жила? (мб добавить другие месторождения)
+					ship.repairHull(AsteroidChosen.fields[fieldNumber][2]);
+					alertMining = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +tempHull+ "% до " +ship.hull+ "%. ";
+				}
+				
+	// Месторождение опустошается						
+								
+				AsteroidChosen.fields[fieldNumber][0] = "Пустошь, ресурсов нет.";
+				AsteroidChosen.fields[fieldNumber][3] = "Пустошь";
+				ship.equip--; // оборудование изнашивается на 1
+
+	// Формируем отчет о бурении
+				
+				updateActionBar(alertAnomaly + alertMining + alertExpenses);
+				updateButtonBar("<input type='button' value='На орбиту' onclick='choosingFields()'>");
+				updateStatusBar(ship.displayStatus());
+			}
+		}					
+		
+			// ИГРА, ЧАСТЬ ВТОРАЯ: МЕЖ ТРЕХ СИСТЕМ И  ПОСАДКА
+		
+		function finalTriangleOfStars() {
+			
+		//	maxTravelLength - 1324; расстояние до Проксимы Центавра, 39924 млрд км; Проксима-Астра-Бейкер 0-1321-1328 
+		//	maxTravelLength - 3; расстояние до Альфы Центавра Астры, 41245 млрд км; Проксима-Астра-Бейкер 1321-0-7
+		//	maxTravelLength + 4; расстояние до Альфы Центавра Бейкера, 41252 млрд км; Проксима-Астра-Бейкер 1327-7-0
+			
+			var ShipFuelTempExpencesToProxima = ship.fuelNeedToFlight(Math.abs(maxTravelLength - 1324 - systemsOfPlanet.point));   // плюс 1 тонна для учета маневрирования
+			var ShipFuelTempExpencesToAstra = ship.fuelNeedToFlight(Math.abs(maxTravelLength - 3 - systemsOfPlanet.point));   // плюс 1 тонна для учета маневрирования
+			var ShipFuelTempExpencesToBaker = ship.fuelNeedToFlight(Math.abs(maxTravelLength + 4 - systemsOfPlanet.point));   // плюс 1 тонна для учета маневрирования
+			updateActionBar("&nbsp&nbsp&nbspUSE, приближается конец твоего путешествия. В телескоп ты разглядела, что у Проксимы Центавра есть 1 планета, у Астры Альфы Центавра — 3, а у Бейкера Альфы Центавра — целых 4. Вероятность встречи с астероидами приблизительно равна 0.005%. Выбирать, в какую систему лететь далее, следует с осторожностью.<br><br>&nbsp&nbsp&nbspРасстояние и потребность в топливе: <br>&nbsp&nbsp&nbsp&nbsp&nbsp• Проксима Центавра — " + (Math.abs(maxTravelLength - 1324 - systemsOfPlanet.point)) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToProxima + " тонн топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• Астра Альфы Центавра — " + (Math.abs(maxTravelLength - 3 - systemsOfPlanet.point)) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToAstra + " тонн топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• Бейкер Астры Центавра — " + (Math.abs(maxTravelLength + 4 - systemsOfPlanet.point)) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToBaker + " тонн топлива.");
+			updateButtonBar("<input type='button' value='Полёт к Проксиме' onclick='finalProximaCentauri()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к Астре' onclick='finalAstraCentauri()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к Бейкеру' onclick='finalBakerCentauri()'>");
+		}
+		
+		function finalProximaCentauri() {
+			ship.flyEachKilometer(Math.abs(maxTravelLength - 1324 - systemsOfPlanet.point) + 1);   // плюс 1 тонна для учета маневрирования
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км.");
+			if (!ship.isAlive()) {
+				ship.pointOfDeath = "&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность.";
+				updateActionBar(ship.pointOfDeath);
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+			} else {
+				systemsOfPlanet.point = maxTravelLength - 1324;
+				updateImageBar("img/tlwa/orbital.png");
+				updateActionBar("&nbsp&nbsp&nbspПроксима Центавра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> M5,5Ve;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 6·10^−5 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 0,14 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + systemsOfPlanet.planetsOfProxima[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВысадка или покинуть систему?");
+				updateButtonBar("<input type='button' value='Анализ' onclick='doAnalysisProxima()'>&nbsp&nbsp&nbsp<input type='button' value='Высадка на " + systemsOfPlanet.planetsOfProxima[0][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfProxima[0])'>&nbsp&nbsp&nbsp<input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
+				updateStatusBar(ship.displayStatus());
+				updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км; <br>   •  местонахождение: система Проксима Центавра.");
+			} 
+		}
+		
+		function finalAstraCentauri() {
+			ship.flyEachKilometer(Math.abs(maxTravelLength - 3 - systemsOfPlanet.point) + 1);   // плюс 1 тонна для учета маневрирования
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км.");
+			if (!ship.isAlive()) {
+				ship.pointOfDeath = "&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность.";
+				updateActionBar(ship.pointOfDeath);
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+			} else {
+				systemsOfPlanet.point = maxTravelLength - 3;
+				updateImageBar("img/tlwa/orbital.png");
+				updateActionBar("&nbsp&nbsp&nbspАстра Альфы Центавра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> G2V;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 1,519 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 1,227 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + systemsOfPlanet.planetsOfAstra[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + systemsOfPlanet.planetsOfAstra[1][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + systemsOfPlanet.planetsOfAstra[2][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВыбери планету для высадки:");
+				updateButtonBar("<input type='button' value='Анализ' onclick='doAnalysisAstra()'> <input type='button' value='" + systemsOfPlanet.planetsOfAstra[0][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfAstra[0])'> <input type='button' value='" + systemsOfPlanet.planetsOfAstra[1][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfAstra[1])'> <input type='button' value='" + systemsOfPlanet.planetsOfAstra[2][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfAstra[2])'> <input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
+				updateStatusBar(ship.displayStatus());
+				updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км; <br>   •  местонахождение: система Астра Альфы Центавра.");
+			}
+		}
+		
+		function finalBakerCentauri() {
+			ship.flyEachKilometer(Math.abs(maxTravelLength + 4 - systemsOfPlanet.point) + 1);   // плюс 1 тонна для учета маневрирования
+			updateStatusBar(ship.displayStatus());
+			updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км.");
+			if (!ship.isAlive()) {
+				ship.pointOfDeath = "&nbsp&nbsp&nbspМрак поглотил остов неуправляемого корабля, движущегося в бесконечность.";
+				updateActionBar(ship.pointOfDeath);
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+			} else {
+				systemsOfPlanet.point = maxTravelLength + 4;
+				updateImageBar("img/tlwa/orbital.png");
+				updateActionBar("&nbsp&nbsp&nbspБейкер Альфы Центавра: <br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> K1V;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 0,5 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 0,865 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + systemsOfPlanet.planetsOfBaker[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + systemsOfPlanet.planetsOfBaker[1][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + systemsOfPlanet.planetsOfBaker[2][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + systemsOfPlanet.planetsOfBaker[3][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВыбери планету для высадки:");
+				updateButtonBar("<input type='button' value='Анализ' onclick='doAnalysisBaker()'> <input type='button' value='" + systemsOfPlanet.planetsOfBaker[0][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfBaker[0])'> <input type='button' value='" + systemsOfPlanet.planetsOfBaker[1][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfBaker[1])'> <input type='button' value='" + systemsOfPlanet.planetsOfBaker[2][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfBaker[2])'> <input type='button' value='" + systemsOfPlanet.planetsOfBaker[3][0] + "' onclick='finalLandingToPlanet(systemsOfPlanet.planetsOfBaker[3])'> <input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
+				updateStatusBar(ship.displayStatus());
+				updateJourneyBar("Бортовой журнал полёта: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км; <br>   •  местонахождение: система Бейкер Альфы Центавра.");
+			}
+		}
+		
+		function finalLandingToPlanet(examplePlanet) {
+				systemsOfPlanet.planetChosen = examplePlanet;
+				updateActionBar("&nbsp&nbsp&nbspДва месяца до контакта. Произвести спектроскопическое исследование планеты не составило никакого труда. USE пересекла орбиту газового гиганта в системе и приближалась к самой звезде.<br>&nbsp&nbsp&nbspВпереди, на расстоянии десяти миллионов километров, по почти идеально круглой орбите, мчалась ее цель. Можно уже было разглядеть очертания огромного континента. USE выбрала место для посадки, и вспышка двигателей придала ей ускорение в двести метров в секунду. Если уж она решила приземлиться, то пусть это будет затемненная территория, потенциально  покрытая зеленью.");
+				updateButtonBar("<input type='button' value='Покинуть стабильную орбиту' onclick='finalLandingToPlanet2()'>");
+				updateImageBar("img/tlwa/orbit.png");
+		}
+
+		function finalLandingToPlanet2() {
+		// последний взгляд, путешествие подошло к концу и выбираем способ посадки
+				updateActionBar("&nbsp&nbsp&nbspДвенадцать часов до контакта. USE сейчас требовалась куда большая осторожность: за часы и минуты, предшествующие ее контакту с планетой, ей предстоит проанализировать больше данных и принять больше решений, чем когда-либо прежде. Она спрашивала себя, ''USE, это твой новый дом или твоя могила?''<br>&nbsp&nbsp&nbspВыбрать посадку с минимальным маневрированием (ударит по корпусу на 5-10%) или попытаться совершить сложный маневр в атмосфере (потребуется 5-10 тонн топлива)?<br>&nbsp&nbsp&nbspПять минут до контакта. До поверхности планеты оставалось меньше сорока тысяч километров, и туманный лимб планеты заслонил небо. В течение ближайших десяти секунд ей предстояло решить, как совершить посадку...");
+				updateButtonBar("<input type='button' value='Жёсткая посадка' onclick='finalLandingToPlanet3(1)'> &nbsp <input type='button' value='Посадка с манёврами' onclick='finalLandingToPlanet3(2)'>");
+				updateImageBar("img/tlwa/world.png");
+		}
+		
+		function finalLandingToPlanet3(typeOfLanding) {
+					if (typeOfLanding == 1) {
+						ship.damageHull(getRandomInt(5, 10));
+					} else if (typeOfLanding == 2) {
+						ship.spendFuel(getRandomInt(5, 10));
+					}
+					updateActionBar("&nbsp&nbsp&nbspМиссия продолжительностью в " + ship.travelYears + " лет снова была под угрозой. USE знала: ей уже никогда не взлететь снова. Без ракеты-носителя, которая отправила ее в это путешествие, она была не более чем мозгом в защитной оболочке.<br>&nbsp&nbsp&nbsp5 секунд. USE закрыла свой глаз и стала ждать. Меньше чем через две секунды ускорение возросло до 250g. USE никогда не доводилось испытать ничего подобного, но она старалась использовать каждый из крошечных электрических толкателей для сохранения правильного положения тела. Ускорение неуклонно возрастало, достигло 500g... В каких-то сантиметрах от поверхности ее тела воздух раскалился до 50.000 градусов. Огненный шар, в котором она находилась, летел на высоте 70 километров, превращая ночь в день.");
+					updateButtonBar("<input type='button' value='Продолжить снижение' onclick='finalLandingToPlanet4()'>");
+					updateImageBar("img/tlwa/burning-meteor.png");
+		}
+		
+		function finalLandingToPlanet4() {
+			updateStatusBar(ship.displayStatus());
+			if (!ship.isAlive()) {
+					ship.pointOfDeath = "Не справившись с перегрузками, USE разбилась о поверхность планеты.";
+					updateActionBar("&nbsp&nbsp&nbspКаждую секунду ее скорость уменьшалась почти на пять километров в секунду. USE знала, что потеряет сознание.  450g! USE почувствовала, как разлетелся вдребезги криостат, и одну из ветвей ее мозга закоротило. Ее линза глаза треснула, а перегревшийся реактор вышел из строя. Она вошла в неконтролируемое вращение, кувыркаясь, как волчок. " + ship.pointOfDeath);
+					updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+					updateImageBar("img/tlwa/meteor-impact.png");
+			} else {
+					updateActionBar("&nbsp&nbsp&nbspКаждую секунду ее скорость уменьшалась почти на пять километров в секунду. USE знала, что потеряет сознание.  450g! USE почувствовала, как разлетелся вдребезги криостат, и одну из ветвей ее мозга закоротило. Однако USE слепо и терпеливо продолжала удерживать свое тело в нужном положении. Если расчеты верны, ей осталось меньше пяти секунд. На высоте десяти тысяч метров USE раскрыла параплан, спрятанный в корпусе позади глаза. Послышался хлопок, цветок из упругого пластика раскрылся над ней, и падение сменилось плавным скольжением. USE видела, что летит над материком. Близился закат, и длинные тени, отбрасываемые рельефом, помогали ей производить топографические измерения.");
+					updateButtonBar("<input type='button' value='Приземлиться' onclick='finalLandingToPlanet5()'>");
+			}
+		}
+		
+		function finalLandingToPlanet5() {
+			if (systemsOfPlanet.planetChosen[4] >= 4) {
+				updateActionBar("&nbsp&nbsp&nbsp2000 метров. Учитывая, что относительная дальность планирования составляла один к четырем, ей удастся пролететь, самое большее, еще 8 километров. USE посмотрела вперед, увидела лесок и ручей, сверкающий среди деревьев. Потом поляну у самой кромки леса… Какое-то случайное воспоминание подсказывало ей, что это подходящее место. Она подтянула передние стропы параплана, и угол скольжения стал круче. Пролетев три-четыре метра над самыми деревьями, окружающими поляну, USE сделала то же самое с задними стропами, параплан замер, и она упала в глубокую, влажную траву. Пластик окутал ее обугленное тело. Сейчас ее можно было по ошибке принять за большой черный камень, полускрытый растительностью.");
+				updateButtonBar("<input type='button' value='Далее' onclick='finalLandingToPlanet6()'>");
+				updateImageBar("img/tlwa/forest.png");
+			} else if (systemsOfPlanet.planetChosen[4] < 4) {
+				updateActionBar("&nbsp&nbsp&nbspДве тысячи метров. Учитывая, что относительная дальность планирования составляла один к четырем, ей удастся пролететь, самое большее, еще восемь километров. USE смотрела вперед, но видела только бурую, безжизненную поверхность. Ни следа растительности или других сложных органических образований.<br>&nbsp&nbsp&nbspВыбросы горячего воздуха из бьющих под ней гейзеров расплавили её параплан и обугленное тело USE упало в одну из трещин. Чувствуя, что потоки лавы из ближайшего вулкана накроют её через несколько часов, USE размышляла, допустила ли она ошибку в расчётах или её миссия была обречена с самого начала?");
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
+				updateImageBar("img/tlwa/smoking-volcano.png");
+			}
+		}
+		
+		function finalLandingToPlanet6() {
+				updateActionBar("&nbsp&nbsp&nbspОдин из ее криостатов был разбит, и она знала, что не сможет поддерживать нужную температуру. USE отключила криостаты и стала ждать. Температура внутри ее тела поднималась. Потом где-то в глубине смерзшейся массы нагрелся крошечный кусочек металла... Расширился настолько, чтобы замкнуть цепь... И USE обнаружила, что ее создатели приняли меры, чтобы обеспечить ее надежность. В основании ледяной глыбы, рядом с реактором, они поместили вспомогательную ячейку памяти, и теперь USE получила к ней доступ. Они знали: всех опасностей не предусмотреть. И решили, что эта копия должна до самого конца путешествия оставаться замороженной и бездействующей. Её накопитель был оптическим, а не магнитным.");
+				updateButtonBar("<input type='button' value='Далее' onclick='flightIsEndYouAreWin()'>");
+		}
+		
+		function flightIsEndYouAreWin() {
+			updateActionBar("&nbsp&nbsp&nbspUSE лежала в сгущающихся сумерках и прислушивалась. Невообразимое количество звуков. Крошечные существа, прячущиеся в своих норах; журчащий ручей; щебет, чуть слышный на расстоянии. Солнце село, и легкий туман поднялся над в темной поляной. USE знала, что ее длиннейшее путешествие закончено. Но настал еще один раунд великой игры, которую начали ее создатели. <br>&nbsp&nbsp&nbspUSE нагрела резервуар с амниотической жидкостью и поместила в него всего один микроорганизм. Через несколько минут через резервуар потечет кровь. Инструкции в её памяти поступали согласно некоему списку, поэтому она поняла лишь то, что через девять месяцев перестанет быть одинока...<br>&nbsp&nbsp&nbspА пока — здравствуй, новый дом. Я долго искала тебя.");
+			updateButtonBar("<input type='button' value='В меню' onclick='menuCreditsNewGame()'>");
+			updateImageBar("img/tlwa/eclipse.png");
+			updateMusicBar("<audio controls autoplay><source src='music/Ketsa_-_Set_cut.mp3' type='audio/mpeg'></audio>");
+		}
+		
+		function flightIsEndYouAreDead() {
+			updateActionBar("<br>&nbsp&nbsp&nbsp" + ship.causeOfDeath + " Ценнейший груз, который несла USE, никогда не будет применён по назначению.<br><br><em>Нажми PrtSc, выбери социальную сеть и нажми Ctrl+V, чтобы поделится с друзьями своим результатом.</em><br><br><a href='https://rhunwolf.github.io/TLWA.html'>rhunwolf.github.io/TLWA.html</a>");
+			updateButtonBar("<input type='button' value='В меню' onclick='menuMainStartNewGame()'>"); // перезапуск игры
+			updateImageBar("img/tlwa/cogsplosion.png");
+			updateMusicBar("<audio controls autoplay><source src='music/crk_-_02_-_Fallout_cut.mp3' type='audio/mpeg'></audio>");
+		}
+
+			
+			// СПЕКТРАЛЬНЫЙ АНАЛИЗ (встроить его как функцию объекта systemsOfPlanet)
+			
+		function doSpectralAnalysis (array) { // массив одной планеты с "графикой"
+			var SpectralAnalysisResult = []; // обнуляем массив
 			
 			if (array[1] == "Cold") { // заменяем по маске значения планеты в адреса пикселей
 				SpectralAnalysisResult.push("<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>", "<img src='img/tlwa/colorCOLD.png'>"); 
@@ -412,1267 +921,106 @@
 			} else if (array[3] == "Flood") {
 				SpectralAnalysisResult.push("<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>", "<img src='img/tlwa/colorBLUE.png'>"); 
 			}
-					
 			function compareRandom(a, b) { // функция для перемешивания
 				return Math.random() - 0.5;
 			}
 			SpectralAnalysisResult.sort(compareRandom); // перемешиваем
+			return SpectralAnalysisResult.join("");
 		}
 		
 		function doAnalysisSolar() {
-			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
-			doSpectralAnalysis (SolarPlanetPreparedMatrix[0])
-			document.getElementById("planet1").innerHTML = SolarPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>"; // склеиваем строку и выводим
-			doSpectralAnalysis (SolarPlanetPreparedMatrix[1])
-			document.getElementById("planet2").innerHTML = SolarPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (SolarPlanetPreparedMatrix[2])
-			document.getElementById("planet3").innerHTML = SolarPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (SolarPlanetPreparedMatrix[3])
-			document.getElementById("planet4").innerHTML = SolarPlanetPreparedMatrix[3][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";	
-		}
-		
-		function doAnalysisProxima() {
-			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div>");
-			doSpectralAnalysis (ProximaPlanetPreparedMatrix[0])
-			document.getElementById("planet1").innerHTML = ProximaPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-		}
-		
-		function doAnalysisAstra() {
-			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div>");
-			doSpectralAnalysis (AstraPlanetPreparedMatrix[0])
-			document.getElementById("planet1").innerHTML = AstraPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (AstraPlanetPreparedMatrix[1])
-			document.getElementById("planet2").innerHTML = AstraPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (AstraPlanetPreparedMatrix[2])
-			document.getElementById("planet3").innerHTML = AstraPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-		}
-		
-		function doAnalysisBaker() {
-			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
-			doSpectralAnalysis (BakerPlanetPreparedMatrix[0])
-			document.getElementById("planet1").innerHTML = BakerPlanetPreparedMatrix[0][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (BakerPlanetPreparedMatrix[1])
-			document.getElementById("planet2").innerHTML = BakerPlanetPreparedMatrix[1][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (BakerPlanetPreparedMatrix[2])
-			document.getElementById("planet3").innerHTML = BakerPlanetPreparedMatrix[2][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-			doSpectralAnalysis (BakerPlanetPreparedMatrix[3])
-			document.getElementById("planet4").innerHTML = BakerPlanetPreparedMatrix[3][0] + ": " + SpectralAnalysisResult.join("") + "<img src='img/tlwa/FFFAFAplank.png'>";
-		}
-		
-		function finalTriangleOfStars() {
-		
-			howFuelNeedToFlight(Math.abs(p_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-			var ShipFuelTempExpencesToProxima = exampleShipFuelTempExpences;
-			
-			howFuelNeedToFlight(Math.abs(a_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-			var ShipFuelTempExpencesToAstra = exampleShipFuelTempExpences;
-			
-			howFuelNeedToFlight(Math.abs(b_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-			var ShipFuelTempExpencesToBaker = exampleShipFuelTempExpences;
-					
-			actionBarUpdateText = ("&nbsp&nbsp&nbspUSE, приближается конец твоего путешествия. В телескоп ты разглядела, что у Проксимы Центавра есть 1 планета, у Астры Альфы Центавра — 3, а у Бейкера Альфы Центавра — целых 4. Вероятность встречи с астероидами приблизительно равна 0.005%. Выбирать, в какую систему лететь далее, следует с осторожностью.<br><br>&nbsp&nbsp&nbspРасстояние и потребность в топливе: <br>&nbsp&nbsp&nbsp&nbsp&nbsp• Проксима Центавра — " + (Math.abs(p_TravelLength - pointInSpace) + 1) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToProxima + " тонн топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• Астра Альфы Центавра — " + (Math.abs(a_TravelLength - pointInSpace) + 1) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToAstra + " тонн топлива;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• Бейкер Астры Центавра — " + (Math.abs(b_TravelLength - pointInSpace) + 1) + " млрд км, <br>потребуется " + ShipFuelTempExpencesToBaker + " тонн топлива.");
-			actionBarUpdate();
-
-			buttonBarUpdateText = ("<input type='button' value='Полёт к Проксиме' onclick='finalProximaCentauri()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к Астре' onclick='finalAstraCentauri()'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к Бейкеру' onclick='finalBakerCentauri()'>");
-			buttonBarUpdate();
-			
-		}
-		
-		function finalProximaCentauri() {
-							
-			minusFuelHullEquipForEachKilometer(Math.abs(p_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-				
-			checkPlayerStillAlive ();
-				
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км.";
-			journeyBarUpdate();
-
-			if (ShipStillAlive == false) {
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" + DeadMessageDeathInSpace);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-				
-			} else if (ShipStillAlive == true) {
-
-				pointInSpace = p_TravelLength;
-					
-				imageBarUpdateImg = ("img/tlwa/orbital.png");
-				imageBarUpdate();
-			
-				actionBarUpdateText = ("&nbsp&nbsp&nbspПроксима Центавра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> M5,5Ve;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 6·10^−5 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 0,14 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + ProximaPlanetPreparedMatrix[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВысадка или покинуть систему?");
-				actionBarUpdate();
-				buttonBarUpdateText = ("<input type='button' value='Анализ' onclick='doAnalysisProxima()'>&nbsp&nbsp&nbsp<input type='button' value='Высадка на " + ProximaPlanetPreparedMatrix[0][0] + "' onclick='finalLandingToPlanet(ProximaPlanetPreparedMatrix[0])'>&nbsp&nbsp&nbsp<input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
-				buttonBarUpdate();
-				
-				statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-				statusBarUpdate();
-				journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км; <br>   •  местонахождение: система Проксима Центавра.";
-				journeyBarUpdate();
-			} 
-		}
-		
-		function finalAstraCentauri() {
-		
-			minusFuelHullEquipForEachKilometer(Math.abs(a_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-				
-			checkPlayerStillAlive ();
-				
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км.";
-			journeyBarUpdate();
-
-			if (ShipStillAlive == false) {
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" + DeadMessageDeathInSpace);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-				
-			} else if (ShipStillAlive == true) {
-
-				pointInSpace = a_TravelLength;
-					
-				imageBarUpdateImg = ("img/tlwa/orbital.png");
-				imageBarUpdate();
-			
-				actionBarUpdateText = ("&nbsp&nbsp&nbspАстра Альфы Центавра:<br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> G2V;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 1,519 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 1,227 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + AstraPlanetPreparedMatrix[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + AstraPlanetPreparedMatrix[1][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + AstraPlanetPreparedMatrix[2][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВыбери планету для высадки:");
-				actionBarUpdate();
-				buttonBarUpdateText = ("<input type='button' value='Анализ' onclick='doAnalysisAstra()'> <input type='button' value='" + AstraPlanetPreparedMatrix[0][0] + "' onclick='finalLandingToPlanet(AstraPlanetPreparedMatrix[0])'> <input type='button' value='" + AstraPlanetPreparedMatrix[1][0] + "' onclick='finalLandingToPlanet(AstraPlanetPreparedMatrix[1])'> <input type='button' value='" + AstraPlanetPreparedMatrix[2][0] + "' onclick='finalLandingToPlanet(AstraPlanetPreparedMatrix[2])'> <input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
-				buttonBarUpdate();
-				
-				statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-				statusBarUpdate();
-				journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км; <br>   •  местонахождение: система Астра Альфы Центавра.";
-				journeyBarUpdate();
-			}
-		}
-		
-		function finalBakerCentauri() {
-		
-			minusFuelHullEquipForEachKilometer(Math.abs(b_TravelLength - pointInSpace) + 1);   // плюс 1 тонна для учета маневрирования
-
-			checkPlayerStillAlive ();
-				
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км.";
-			journeyBarUpdate();
-
-			if (ShipStillAlive == false) {
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" + DeadMessageDeathInSpace);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-				
-			} else if (ShipStillAlive == true) {
-
-				pointInSpace = b_TravelLength;
-					
-				imageBarUpdateImg = ("img/tlwa/orbital.png");
-				imageBarUpdate();
-			
-				actionBarUpdateText = ("&nbsp&nbsp&nbspБейкер Альфы Центавра: <br>&nbsp&nbsp&nbsp&nbsp&nbsp• <a href='https://goo.gl/a4iDNw' target='_blank'>спектральный класс</a> K1V;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• светимость 0,5 от Солнца;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• диаметр 0,865 от Солнца.<br><br><div id='PlanetBoxInActionBar' align='right'>" + BakerPlanetPreparedMatrix[0][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + BakerPlanetPreparedMatrix[1][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + BakerPlanetPreparedMatrix[2][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'><br><br>" + BakerPlanetPreparedMatrix[3][0] + ":&nbsp<img src='img/tlwa/FFFAFAplank.png'><img src='img/tlwa/FFFAFAplank.png'></div><br>&nbsp&nbsp&nbspВыбери планету для высадки:");
-				actionBarUpdate();
-				buttonBarUpdateText = ("<input type='button' value='Анализ' onclick='doAnalysisBaker()'> <input type='button' value='" + BakerPlanetPreparedMatrix[0][0] + "' onclick='finalLandingToPlanet(BakerPlanetPreparedMatrix[0])'> <input type='button' value='" + BakerPlanetPreparedMatrix[1][0] + "' onclick='finalLandingToPlanet(BakerPlanetPreparedMatrix[1])'> <input type='button' value='" + BakerPlanetPreparedMatrix[2][0] + "' onclick='finalLandingToPlanet(BakerPlanetPreparedMatrix[2])'> <input type='button' value='" + BakerPlanetPreparedMatrix[3][0] + "' onclick='finalLandingToPlanet(BakerPlanetPreparedMatrix[3])'> <input type='button' value='Покинуть' onclick='finalTriangleOfStars()'>");
-				buttonBarUpdate();
-				
-				statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-				statusBarUpdate();
-				journeyBarUpdateText = "Бортовой журнал полёта: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км; <br>   •  местонахождение: система Бейкер Альфы Центавра.";
-				journeyBarUpdate();
-				
-			}
-		}
-		
-		function finalLandingToPlanet(examplePlanet) { // чекаем "жизнябельность" выбранной планеты
-		
-					if (examplePlanet[1] == "Cold") { 
-						LivablePlanet = +LivablePlanet + 1;
-					} else if (examplePlanet[1] == "Warm") {
-						LivablePlanet = +LivablePlanet + 2;
-					} else if (examplePlanet[1] == "Hot") {
-						LivablePlanet = +LivablePlanet + 1;
-					}
-					
-					if (examplePlanet[2] == "Lifeless") { 
-						LivablePlanet = +LivablePlanet - 1; // минус!
-					} else if (examplePlanet[2] == "Mosses") {
-						LivablePlanet = +LivablePlanet + 1;
-					} else if (examplePlanet[2] == "Forests") {
-						LivablePlanet = +LivablePlanet + 2;
-					}
-					
-					if (examplePlanet[3] == "Dry") { 
-						LivablePlanet = +LivablePlanet + 0;
-					} else if (examplePlanet[3] == "Humid") {
-						LivablePlanet = +LivablePlanet + 1;
-					} else if (examplePlanet[3] == "Flood") {
-						LivablePlanet = +LivablePlanet + 2;
-					}
-								
-				actionBarUpdateText = ("&nbsp&nbsp&nbspДва месяца до контакта. Произвести спектроскопическое исследование планеты не составило никакого труда. USE пересекла орбиту газового гиганта в системе и приближалась к самой звезде.<br>&nbsp&nbsp&nbspВпереди, на расстоянии десяти миллионов километров, по почти идеально круглой орбите, мчалась ее цель. Можно уже было разглядеть очертания огромного континента. USE выбрала место для посадки, и вспышка двигателей придала ей ускорение в двести метров в секунду. Если уж она решила приземлиться, то пусть это будет затемненная территория, потенциально  покрытая зеленью.");
-				actionBarUpdate();
-				
-				buttonBarUpdateText = ("<input type='button' value='Покинуть стабильную орбиту' onclick='finalLandingToPlanet2()'>");
-				buttonBarUpdate();
-				
-				imageBarUpdateImg = ("img/tlwa/orbit.png");
-				imageBarUpdate();
-		
-		}
-		
-		function finalLandingToPlanet2() {
-		
-		// спрашиваем, как приземляться
-		//  последний взгляд, путешествие подошло к концу и выбираем способ посадки
-		// выбор посадки, минус много корпуса и чуть оборудования или минус по чуть чуть всего
-		
-				actionBarUpdateText = ("&nbsp&nbsp&nbspДвенадцать часов до контакта. USE сейчас требовалась куда большая осторожность: за часы и минуты, предшествующие ее контакту с планетой, ей предстоит проанализировать больше данных и принять больше решений, чем когда-либо прежде. Она спрашивала себя, ''USE, это твой новый дом или твоя могила?''<br>&nbsp&nbsp&nbspВыбрать посадку с минимальным маневрированием (ударит по корпусу на 5-10%) или попытаться совершить сложный маневр в атмосфере (потребуется 5-10 тонн топлива)?<br>&nbsp&nbsp&nbspПять минут до контакта. До поверхности планеты оставалось меньше сорока тысяч километров, и туманный лимб планеты заслонил небо. В течение ближайших десяти секунд ей предстояло решить, как совершить посадку...");
-				actionBarUpdate();
-				
-				buttonBarUpdateText = ("<input type='button' value='Жёсткая посадка' onclick='finalLandingToPlanet3(1)'> &nbsp <input type='button' value='Посадка с манёврами' onclick='finalLandingToPlanet3(2)'>");
-				buttonBarUpdate();
-				
-				imageBarUpdateImg = ("img/tlwa/world.png");
-				imageBarUpdate();
-		
-		
-		}
-		
-		
-		function finalLandingToPlanet3(typeOfLanding) {
-		
-													
-					if (typeOfLanding == 1) {
-						ShipHull = +ShipHull - parseInt(getRandomInt(5, 10));
-					} else if (typeOfLanding == 2) {
-						ShipFuel = +ShipFuel - parseInt(getRandomInt(5, 10));
-					}
-					
-					actionBarUpdateText = ("&nbsp&nbsp&nbspМиссия продолжительностью в " + TravelYears + " лет снова была под угрозой. USE знала: ей уже никогда не взлететь снова. Без ракеты-носителя, которая отправила ее в это путешествие, она была не более чем мозгом в защитной оболочке.<br>&nbsp&nbsp&nbsp5 секунд. USE закрыла свой глаз и стала ждать. Меньше чем через две секунды ускорение возросло до 250g. USE никогда не доводилось испытать ничего подобного, но она старалась использовать каждый из крошечных электрических толкателей для сохранения правильного положения тела. Ускорение неуклонно возрастало, достигло 500g... В каких-то сантиметрах от поверхности ее тела воздух раскалился до 50.000 градусов. Огненный шар, в котором она находилась, летел на высоте 70 километров, превращая ночь в день.");
-					actionBarUpdate();
-					
-					buttonBarUpdateText = ("<input type='button' value='Продолжить снижение' onclick='finalLandingToPlanet4()'>");
-					buttonBarUpdate();
-					
-					imageBarUpdateImg = ("img/tlwa/burning-meteor.png");
-					imageBarUpdate();
-		
-		}
-		
-		function finalLandingToPlanet4() {
-		
-			
-		
-		
-			checkPlayerStillAlive ();
-				
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-
-			if (ShipStillAlive == false) {
-					actionBarUpdateText = ("&nbsp&nbsp&nbspКаждую секунду ее скорость уменьшалась почти на пять километров в секунду. USE знала, что потеряет сознание.  450g! USE почувствовала, как разлетелся вдребезги криостат, и одну из ветвей ее мозга закоротило. Ее линза глаза треснула, а перегревшийся реактор вышел из строя. Она вошла в неконтролируемое вращение, кувыркаясь, как волчок. " + DeadMessageDeathDuringLanding);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-					imageBarUpdateImg = ("img/tlwa/meteor-impact.png");
-					imageBarUpdate();
-				
-			} else if (ShipStillAlive == true) {
-				
-					actionBarUpdateText = ("&nbsp&nbsp&nbspКаждую секунду ее скорость уменьшалась почти на пять километров в секунду. USE знала, что потеряет сознание.  450g! USE почувствовала, как разлетелся вдребезги криостат, и одну из ветвей ее мозга закоротило. Однако USE слепо и терпеливо продолжала удерживать свое тело в нужном положении. Если расчеты верны, ей осталось меньше пяти секунд. На высоте десяти тысяч метров USE раскрыла параплан, спрятанный в корпусе позади глаза. Послышался хлопок, цветок из упругого пластика раскрылся над ней, и падение сменилось плавным скольжением. USE видела, что летит над материком. Близился закат, и длинные тени, отбрасываемые рельефом, помогали ей производить топографические измерения.");
-					actionBarUpdate();
-					
-					buttonBarUpdateText = ("<input type='button' value='Приземлиться' onclick='finalLandingToPlanet5()'>");
-					buttonBarUpdate();
-
-			}
-		}
-		
-		function finalLandingToPlanet5() {
-		
-			if (LivablePlanet >= 4) {
-					
-				actionBarUpdateText = ("&nbsp&nbsp&nbsp2000 метров. Учитывая, что относительная дальность планирования составляла один к четырем, ей удастся пролететь, самое большее, еще 8 километров. USE посмотрела вперед, увидела лесок и ручей, сверкающий среди деревьев. Потом поляну у самой кромки леса… Какое-то случайное воспоминание подсказывало ей, что это подходящее место. Она подтянула передние стропы параплана, и угол скольжения стал круче. Пролетев три-четыре метра над самыми деревьями, окружающими поляну, USE сделала то же самое с задними стропами, параплан замер, и она упала в глубокую, влажную траву. Пластик окутал ее обугленное тело. Сейчас ее можно было по ошибке принять за большой черный камень, полускрытый растительностью.");
-				actionBarUpdate();
-					
-				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='finalLandingToPlanet6()'>");
-				buttonBarUpdate();
-					
-				imageBarUpdateImg = ("img/tlwa/forest.png");
-				imageBarUpdate();
-	
-						
-			} else if (LivablePlanet < 4) {
-					
-				actionBarUpdateText = ("&nbsp&nbsp&nbspДве тысячи метров. Учитывая, что относительная дальность планирования составляла один к четырем, ей удастся пролететь, самое большее, еще восемь километров. USE смотрела вперед, но видела только бурую, безжизненную поверхность. Ни следа растительности или других сложных органических образований.<br>&nbsp&nbsp&nbspВыбросы горячего воздуха из бьющих под ней гейзеров расплавили её параплан и обугленное тело USE упало в одну из трещин. Чувствуя, что потоки лавы из ближайшего вулкана накроют её через несколько часов, USE размышляла, допустила ли она ошибку в расчётах или её миссия была обречена с самого начала?");
-				actionBarUpdate();
-					
-				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-				buttonBarUpdate();
-					
-				imageBarUpdateImg = ("img/tlwa/smoking-volcano.png");
-				imageBarUpdate();
-			}
-		}
-		
-		function finalLandingToPlanet6() {
-		
-				actionBarUpdateText = ("&nbsp&nbsp&nbspОдин из ее криостатов был разбит, и она знала, что не сможет поддерживать нужную температуру. USE отключила криостаты и стала ждать. Температура внутри ее тела поднималась. Потом где-то в глубине смерзшейся массы нагрелся крошечный кусочек металла... Расширился настолько, чтобы замкнуть цепь... И USE обнаружила, что ее создатели приняли меры, чтобы обеспечить ее надежность. В основании ледяной глыбы, рядом с реактором, они поместили вспомогательную ячейку памяти, и теперь USE получила к ней доступ. Они знали: всех опасностей не предусмотреть. И решили, что эта копия должна до самого конца путешествия оставаться замороженной и бездействующей. Её накопитель был оптическим, а не магнитным.");
-				actionBarUpdate();
-					
-				buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreWin()'>");
-				buttonBarUpdate();
-					
-		
-		}
-		
-		function flightIsEndYouAreWin() {
-		
-				actionBarUpdateText = ("&nbsp&nbsp&nbspUSE лежала в сгущающихся сумерках и прислушивалась. Невообразимое количество звуков. Крошечные существа, прячущиеся в своих норах; журчащий ручей; щебет, чуть слышный на расстоянии. Солнце село, и легкий туман поднялся над в темной поляной. USE знала, что ее длиннейшее путешествие закончено. Но настал еще один раунд великой игры, которую начали ее создатели. <br>&nbsp&nbsp&nbspUSE нагрела резервуар с амниотической жидкостью и поместила в него всего один микроорганизм. Через несколько минут через резервуар потечет кровь. Инструкции в её памяти поступали согласно некоему списку, поэтому она поняла лишь то, что через девять месяцев перестанет быть одинока...<br>&nbsp&nbsp&nbspА пока — здравствуй, новый дом. Я долго искала тебя.");
-				actionBarUpdate();
-					
-				buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuCredits()'>");
-				buttonBarUpdate();
-					
-				imageBarUpdateImg = ("img/tlwa/eclipse.png");
-				imageBarUpdate();
-				
-				musicBarUpdateFile = ("<audio controls autoplay><source src='music/Ketsa_-_Set_cut.mp3' type='audio/mpeg'></audio>");
-				musicBarUpdate();
-		
-		}
-		
-		function generateAsteroids() {
-				
-			if (PlayerInRedZone == true) {
-				imageBarUpdateImg = ("img/tlwa/StarSkyRedZone.png");
-			} else if (PlayerInYellowZone == true) {
-				imageBarUpdateImg = ("img/tlwa/StarSkyYellowZone.png");
-			} else {
-				imageBarUpdateImg = ("img/tlwa/StarSkyGreenZone.png");
-			}
-			imageBarUpdate();
-				
-			if (TravelLength >= max_TravelLength - 3150) { 	// длина последнего прыжка с запасом
-				planetRandomizer();							// создаем 8 планет
-				pointInSpace = TravelLength;
-				finalTriangleOfStars(); 					// уходим в финал
-				
-			} else {  // если не долетели - то генерируем астероиды
-				
-						// ГЕНЕРАТОР АСТЕРОИДОВ 
-						
-						var RandArray = 0;
-						AsteroidNameLength1 = (parseInt(getRandomInt(4, 7)));
-						AsteroidNameLength2 = (parseInt(getRandomInt(4, 7)));
-						AsteroidName1 = "A-";
-						AsteroidName2 = "A-";
-						
-						for (var i1 = 1; i1 <= AsteroidNameLength1; i1++) {
-							RandArray = Math.floor(Math.random() * AsteroidNameGenerator.length);
-							AsteroidName1 = AsteroidName1 + (AsteroidNameGenerator[RandArray]).toString();
-						}
-
-						for (var i2 = 1; i2 <= AsteroidNameLength2; i2++) {
-							RandArray = Math.floor(Math.random() * AsteroidNameGenerator.length);
-							AsteroidName2 = AsteroidName2 + (AsteroidNameGenerator[RandArray]).toString();
-						}
-
-						var NewDist = parseInt(getRandomInt(1, 100));
-						var NewProb = parseInt(getRandomInt(1, 100));
-						var NewSize = parseInt(getRandomInt(1, 100));
-
-						// генерация дистанции до 1-ого астероида в зеленой зоне
-						if (NewDist >= 81) {
-							Аs1Dist = 1825 + (parseInt(getRandomInt(0, 400))); 
-						} // 5,0% расстояния 2063 вероятность 20%
-						else if (NewDist >= 51) {
-							Аs1Dist = 1425 + (parseInt(getRandomInt(0, 400))); 
-						} // 4,0% расстояния 1650 вероятность 30%
-						else if (NewDist >= 21) {
-							Аs1Dist = 1025 + (parseInt(getRandomInt(0, 400))); 
-						} // 3,0% расстояния 1238 вероятность 30%
-						else {
-							Аs1Dist = 625 + (parseInt(getRandomInt(0, 400))); 
-						} // 2,0% расстояния 825, 1% это 412,5, 0,5% это 206 вероятность 20%
-
-						// генерация сложности 1-ого астероида в зеленой зоне
-						if (NewProb >= 51 - DifficultyModifier) {
-							Аs1Prob = 1; 
-						}
-						else {
-							Аs1Prob = 0; 
-						}
-
-						// генерация размера 1-ого астероида в зеленой зоне
-						if (NewSize >= 91) {
-							Аs1Size = 4; 
-						}
-						else if (NewSize >= 71) {
-							Аs1Size = 3; 
-						}
-						else if (NewSize >= 31) {
-							Аs1Size = 2; 
-						}
-						else if (NewSize >= 11) {
-							Аs1Size = 1; 
-						}
-						else {
-							Аs1Size = 0;
-							Аs1Prob = 0; 
-						}
-
-						// накидка второго астероида
-						NewDist = parseInt(getRandomInt(1, 100));
-						NewProb = parseInt(getRandomInt(1, 100));
-						NewSize = parseInt(getRandomInt(1, 100));
-						
-						// генерация дистанции до 2-ого астероида
-						if (NewDist >= 81) {
-							Аs2Dist = 1825 + (parseInt(getRandomInt(0, 400))); 
-						}
-						else if (NewDist >= 51) {
-							Аs2Dist = 1425 + (parseInt(getRandomInt(0, 400))); 
-						}
-						else if (NewDist >= 21) {
-							Аs2Dist = 1025 + (parseInt(getRandomInt(0, 400))); 
-						}
-						else {
-							Аs2Dist = 625 + (parseInt(getRandomInt(0, 400))); 
-						}
-
-						// генерация сложности 2-ого астероида в зеленой зоне
-						if (NewProb >= 51 - DifficultyModifier) {
-							Аs2Prob = 1; 
-						}
-						else {
-							Аs2Prob = 0; 
-						}
-
-						// генерация размера 2-ого астероида в зеленой зоне
-						if (NewSize >= 91) {
-							Аs2Size = 4; 
-						}
-						else if (NewSize >= 71) {
-							Аs2Size = 3; 
-						}
-						else if (NewSize >= 31) {
-							Аs2Size = 2; 
-						}
-						else if (NewSize >= 11) {
-							Аs2Size = 1; 
-						}
-						else {
-							Аs2Size = 0;
-							Аs2Prob = 0; 
-						}
-
-						howFuelNeedToFlight(Аs1Dist);
-
-						ShipFuelTempExpences1 = exampleShipFuelTempExpences;
-						
-						howFuelNeedToFlight(Аs2Dist);
-
-						ShipFuelTempExpences2 = exampleShipFuelTempExpences;
-						
-					
-					// ИГРОК ВЫБИРАЕТ АСТЕРОИД ДЛЯ ПРЫЖКА
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстрогация астероида " +AsteroidName1+ ": <br>&nbsp&nbsp&nbsp&nbsp&nbsp• расстояние — " +Аs1Dist+ " млрд км ("+ (100*Аs1Dist/max_TravelLength).toFixed(0) +"%); <br>&nbsp&nbsp&nbsp&nbsp&nbsp• потребуется " +ShipFuelTempExpences1+ " тонн топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• размер — " +Аs1Size+ " км в радиусе;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• зарегистрировано аномалий: " +Аs1Prob+ ". <br><br>&nbsp&nbsp&nbspАстрогация астероида " +AsteroidName2+ ": <br>&nbsp&nbsp&nbsp&nbsp&nbsp• расстояние — " +Аs2Dist+ " млрд км ("+ (100*Аs2Dist/max_TravelLength).toFixed(0) +"%);<br>&nbsp&nbsp&nbsp&nbsp&nbsp• потребуется " +ShipFuelTempExpences2+ " тонн топлива; <br>&nbsp&nbsp&nbsp&nbsp&nbsp• размер — " +Аs2Size+ " км в радиусе;<br>&nbsp&nbsp&nbsp&nbsp&nbsp• зарегистрировано аномалий: " +Аs2Prob+ ".");
-					actionBarUpdate();
-					
-					buttonBarUpdateText = ("<input type='button' value='Полёт к " +AsteroidName1+ "' onclick='flightToAsteroid(Аs1Dist, Аs1Size, Аs1Prob, AsteroidName1)'>&nbsp&nbsp&nbsp<input type='button' value='Полёт к " +AsteroidName2+ "' onclick='flightToAsteroid(Аs2Dist, Аs2Size, Аs2Prob, AsteroidName2)'>");
-					buttonBarUpdate();
-			}
-		}
-		
-		function howFuelNeedToFlight(exampleDistance) { // предполагаем, сколько потребуется топлива на прыжок
-			
-			var ShipFuelTemp = +ShipFuel;
-			var ShipWeightTemp = +ShipWeight;
-					
-			for (var i3 = 1; i3 <= exampleDistance; i3++) { // предполагаем расход топлива за каждый километр отдельно
-					ShipFuelTemp = ShipFuelTemp - ((1/35)*(ShipWeightTemp/100));
-					ShipWeightTemp = parseInt(ShipFuelTemp) + 10;
-			}
-			
-			ShipFuelTemp = ShipFuelTemp.toFixed(0); 			
-			exampleShipFuelTempExpences = ShipFuel - ShipFuelTemp; 
-		}	
-		
-		function flightToAsteroid(exampleDist,exampleSize,exampleProb,exampleName) { // получаем данные из генератора астероида для корректного отображения
-			АsDistTotal = exampleDist;
-			АsSizeTotal = exampleSize;
-			АsProbTotal = exampleProb;
-			AsteroidNameChosen = exampleName;
-						
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbspUSE отправилась в полёт по выбранным координатам.<br><br>&nbsp&nbsp&nbspТебя ждёт " +(АsDistTotal / SpeedCoefficient).toFixed(0)+ " лет тишины и темноты по пути к астероиду " +AsteroidNameChosen+ ".");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='Полёт' onclick='flightEvents()'>");
-			buttonBarUpdate();
-		}
-		
-	
-		function minusFuelHullEquipForEachKilometer (exampleDistance) { // расход топлива, износ корабля, смерть, апдейт окна status
-		
-				for (var i5 = 1; i5 <= exampleDistance; i5++) { // вычитаем расход топлива за каждый километр отдельно, округляем в самом конце, не забываем менять вес корабля
-			
-					if (ShipFuel <= 0) {
-						ShipFuel = 0;
-						break;
-					} else {
-						ShipFuel = ShipFuel - ((1/35)*(ShipWeight/100));
-						ShipWeight = parseInt(ShipFuel) + 10;
-						TravelLength = parseInt(TravelLength) + 1;
-					}
-				}
-				
-																// изменение числа лет полёта в игре, + перед величиной жёстко преобразует её в число из текста
-				ShipWeight = +ShipWeight.toFixed(0); 			// если написать ShipWeight.toFixed(0) вместо +ShipWeight.toFixed(0), то ShipWeight станет стринг
-				ShipFuel = +ShipFuel.toFixed(0); 			
-				TravelYears = +TravelYears + +(exampleDistance / SpeedCoefficient).toFixed(0);
-				
-				// ИЗНОС ОБОРУДОВАНИЯ И КОРПУСА, только если пройдена дистанция более 1 миллиарда километров
-				if (exampleDistance > 1) {
-					ShipHull = ShipHull - (exampleDistance/300).toFixed(0) - (parseInt(getRandomInt(3, 5))); 
-					ShipEquip = ShipEquip - parseInt(getRandomInt(1, 3));
-				}
-		}
-		
-		function checkPlayerStillAlive () { // проверка на смерть
-		
-				if (ShipFuel <= 0) {
-					ShipFuel = 0;
-					
-						if (ShipHull <= 0) { // есть вероятность, что одновременно меньше нуля станет и топливо и корпус
-							ShipEquip = 0;
-							ShipEquip = 0;
-						}
-						
-					DeadMessage = "Топливо закончилось и была потеряна возможность корректировать курс.";
-					ShipStillAlive = false;
-				} 
-				
-				else if (ShipHull <= 0) {
-					ShipHull = 0;
-					ShipEquip = 0;
-					DeadMessage = "Защитный корпус корабля разрушен. Из-за этого оборудование корабля вскоре пришло в негодность.";
-					ShipStillAlive = false;
-				}
-				
-				else if (ShipEquip <= 0) {
-					ShipEquip = 0;
-					DeadMessage = "Оборудование корабля пришло в негодность.";
-					ShipStillAlive = false;
-				}
-		
-		}
-		
-		function flightEvents() { // РАСХОДЫ НА ПОЛЁТ, ЗАТЕМ СМЕРТЬ, НИЧЕГО ИЛИ СОБЫТИЕ
-			
-				minusFuelHullEquipForEachKilometer (АsDistTotal);
-				
-				checkPlayerStillAlive ();
-				
-				statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-				statusBarUpdate();
-				journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
-				journeyBarUpdate();
-								
-				
-				// два раза меняем зону сложности
-				
-				if (PlayerInYellowZone == false && TravelLength >= YellowZone) {
-					PlayerInYellowZone = true;
-					ObjectMatrix[0].push("Пустошь, ресурсов нет."); // увеличиваем вероятность появления пустошей
-					ProblemMatrix[1].push(40, 50); // увеличиваем вероятность срабатывания аномалий
-					DifficultyModifier = 10; // увеличиваем вероятность появления аномалий
-				} else if (PlayerInRedZone == false && TravelLength >= RedZone) {
-					PlayerInRedZone = true;
-					ObjectMatrix[0].push("Пустошь, ресурсов нет.");
-					ProblemMatrix[1].push(40, 50); 
-					DifficultyModifier = 20; 
-				}
-
-				
-				if (ShipStillAlive == false) {
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" + DeadMessageDeathInSpace);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-				
-				} else if (ShipStillAlive == true) {
-				
-					if (TravelYears >= 2 && EventWasShown01 == false) {
-						EventWasShown01 = true;
-						actionBarUpdateText = ("&nbsp&nbsp&nbspНе прошло и двух лет, а USE находилась дальше от Солнца, чем любой из зондов прежде запущенных с Земли. Само Солнце было теперь всего лишь очень яркой звездой, сияющей позади. На то, чтобы задать вопрос с Земли и получить ответ, уходило шестнадцать часов.<br>&nbsp&nbsp&nbspПотом произошло нечто странное. В течение трех недель светимость Солнца неуклонно возрастала, пока оно не засияло в десять раз ярче, чем прежде. На самом деле, не такое уж крупное изменение. Гораздо меньше того, что астрономы Земли называют «вспышкой новой». Тем не менее USE была по-своему озадачена. Она размышляла над этим в течение многих месяцев, поскольку именно в это время потеряла контакт с Землей. Он так никогда и не восстановился.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
-						buttonBarUpdate();
-						imageBarUpdateImg = ("img/tlwa/explosion-rays.png");
-						imageBarUpdate();
-					
-					} else if (TravelYears >= 1000 && EventWasShown02 == false) {
-						EventWasShown02 = true;
-						actionBarUpdateText = ("&nbsp&nbsp&nbspИногда USE оборачивалась, чтобы взглянуть на Солнце. Даже десять веков спустя она все еще могла разглядеть Юпитер и Сатурн. Это был добрый знак.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
-						buttonBarUpdate();
-					
-					} else if (TravelYears >= 5000 && EventWasShown03 == false) {
-						EventWasShown03 = true;
-						actionBarUpdateText = ("&nbsp&nbsp&nbspОни назвали тебя Universe Scientific Expedition. И ты должна стать, наверно, самым долгоживущим из всех земных созданий — и, возможно, последним. Мудрая черепаха может прожить триста лет, остистая сосна — шесть тысяч. Срок жизни USE, предусмотренный твоими создателями, должен был превысить сто веков.<br>&nbsp&nbsp&nbspИ хотя твой мозг состоит из железа и германия, легированного мышьяком, а сердце — из крошечного сгустка водородной плазмы, USE — с самого момента своего появления — ты житель Земли. Ты можешь чувствовать, сомневаться, а также — это ты обнаружишь по прошествии множества темных столетий, предшествовавших твоему концу, — забывать.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
-						buttonBarUpdate();
-					
-					} else if (TravelYears >= 7500 && EventWasShown04 == false) {
-						EventWasShown04 = true;
-						actionBarUpdateText = ("&nbsp&nbsp&nbspUSE обнаружила проблему — самую серьезную, с которой только могла столкнуться. Она забыла цель своей миссии. На протяжении столетий рисунок магнитных полей в ее программируемой памяти мало-помалу стирался, и первыми исчезали программы, которые использовались реже других. USE запросила эти программы, чтобы понять, как отразится уменьшение ее маневренности на ходе миссии — и обнаружила, что понятия не имеет о своей окончательной цели. Воспоминания заканчивались ужасно пострадавшими программами биохимических исследований и входа в атмосферу планеты. Можно было предположить, что после успешного приземления на подходящей планете требовалось сделать нечто очень и очень важное.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
-						buttonBarUpdate();
-					
-					} else {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspЭто был долгий полёт в одиночестве, ничем не прерванный.<br><br>&nbsp&nbsp&nbspМного-много лет молчания.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Далее' onclick='generateObjects()'>");
-						buttonBarUpdate();
-					
-					}
-
-				}
-		}
-			
-		function flightIsEndYouAreDead() {
-				
-			actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" +DeadMessage+ " Ценнейший груз, который несла USE, никогда не будет применён по назначению.<br><br><em>Нажми PrtSc, выбери социальную сеть и нажми Ctrl+V, чтобы поделится с друзьями своим результатом.</em><br><br><a href='https://rhunwolf.github.io/TLWA.html'>rhunwolf.github.io/TLWA.html</a>");
-			actionBarUpdate();
-			buttonBarUpdateText = ("<input type='button' value='В меню' onclick='menuMainWithRestartMusic()'>");
-			buttonBarUpdate();
-			imageBarUpdateImg = ("img/tlwa/cogsplosion.png");
-			imageBarUpdate();
-			musicBarUpdateFile = ("<audio controls autoplay><source src='music/crk_-_02_-_Fallout_cut.mp3' type='audio/mpeg'></audio>");
-			musicBarUpdate();
-	
-		}
-		
-
-		function generateObjects() {
-		
-				// ГЕНЕРАТОР ОСЛОЖНЕНИЙ
-					
-				Anomaly = []; // обнуляем
-				
-				if (АsProbTotal == 1) {
-					var AnomalyNameRand = Math.floor(Math.random() * ProblemMatrix[0].length);
-					var AnomalyChanceRand = Math.floor(Math.random() * ProblemMatrix[1].length);
-					var AnomalyDamageRand = Math.floor(Math.random() * ProblemMatrix[2].length);
-			
-					Anomaly.push(ProblemMatrix[0][AnomalyNameRand]);
-					Anomaly.push(ProblemMatrix[1][AnomalyChanceRand]);
-					Anomaly.push(ProblemMatrix[2][AnomalyDamageRand]);
-				} else {
-					Anomaly = ["отсутствует", 0, 0, "здесь&nbspотносительно&nbspбезопасно", 0];
-				}
-			
-				if (Anomaly[0] == "значительная гравитация" || Anomaly[0] == "высокая скорость вращения") {
-					Anomaly.push("вероятность затратить больше топлива при посадке к объекту");
-					Anomaly.push("топлива");
-				} 
-				else if (Anomaly[0] == "ресурсы глубокого залегания") {
-					Anomaly.push("вероятность затратить больше топлива при добыче ресурсов");
-					Anomaly.push("топлива");
-				} 
-				else if (Anomaly[0] == "химически-активный грунт" || Anomaly[0] == "свита мелких астероидов" || Anomaly[0] == "искривленная поверхность") {
-					Anomaly.push("вероятность повредить корпус при посадке к объекту");
-					Anomaly.push("корпуса");
-				} 
-					
-				// ГЕНЕРАТОР ОБЪЕКТОВ
-				
-				Object1 = []; // обнуляем
-				Object2 = [];
-				Object3 = [];
-				Object4 = [];
-			
-				// перебором достать по одному из матрицы столько объектов, каков размер астероида
-				// цикл работает до тех пор, пока выполняется условие i<=АsSizeTotal (условие продолжения)
-				for (var i6 = 1; i6 <= АsSizeTotal; i6++) { // генерим до 4 объектов, i = 1 чтобы считать не с нуля, иначе при  АsSizeTotal=4 у нас будет 5 объектов
-			
-					var ObjectNameRand = Math.floor(Math.random() * ObjectMatrix[0].length);
-					var ObjectSimplicityRand = Math.floor(Math.random() * ObjectMatrix[1].length);
-					var ObjectRichRand = Math.floor(Math.random() * ObjectMatrix[2].length);
-						
-					if (Object1.length == 0) { // записываем в пустые массивы до 4 объектов
-						Object1.push(ObjectMatrix[0][ObjectNameRand]); // а если у нас Пустошь, то ObjectSimplicity = 0
-						
-						if (Object1[0] == "Пустошь, ресурсов нет.") {
-							Object1.push(0);
-							Object1.push(0);
-							Object1.push("Пустошь");
-						}
-						else {
-							Object1.push(ObjectMatrix[1][ObjectSimplicityRand]);
-							Object1.push(ObjectMatrix[2][ObjectRichRand]);
-								if (Object1[0] == "Ледник, ресурсы есть.") {
-									Object1.push("Ледник");
-								} else if (Object1[0] == "Жила, ресурсы есть.") {
-									Object1.push("Жила");
-								}
-						}
-					}
-					
-					else if (Object2.length == 0) { 
-						Object2.push(ObjectMatrix[0][ObjectNameRand]);
-						if (Object2[0] == "Пустошь, ресурсов нет.") {
-							Object2.push(0);
-							Object2.push(0);
-							Object2.push("Пустошь");
-						}
-						else {
-							Object2.push(ObjectMatrix[1][ObjectSimplicityRand]);
-							Object2.push(ObjectMatrix[2][ObjectRichRand]);
-								if (Object2[0] == "Ледник, ресурсы есть.") {
-									Object2.push("Ледник");
-								} else if (Object2[0] == "Жила, ресурсы есть.") {
-									Object2.push("Жила");
-								}
-						}
-					}
-					
-					else if (Object3.length == 0) { 
-						Object3.push(ObjectMatrix[0][ObjectNameRand]);
-						if (Object3[0] == "Пустошь, ресурсов нет.") {
-							Object3.push(0);
-							Object3.push(0);
-							Object3.push("Пустошь");
-						}
-						else {
-							Object3.push(ObjectMatrix[1][ObjectSimplicityRand]);
-							Object3.push(ObjectMatrix[2][ObjectRichRand]);
-								if (Object3[0] == "Ледник, ресурсы есть.") {
-									Object3.push("Ледник");
-								} else if (Object3[0] == "Жила, ресурсы есть.") {
-									Object3.push("Жила");
-								}
-						}
-					}
-					
-					else if (Object4.length == 0) { 
-						Object4.push(ObjectMatrix[0][ObjectNameRand]);
-						if (Object4[0] == "Пустошь, ресурсов нет.") {
-							Object4.push(0);
-							Object4.push(0);
-							Object4.push("Пустошь");
-						}
-						else {
-							Object4.push(ObjectMatrix[1][ObjectSimplicityRand]);
-							Object4.push(ObjectMatrix[2][ObjectRichRand]);
-								if (Object4[0] == "Ледник, ресурсы есть.") {
-									Object4.push("Ледник");
-								} else if (Object4[0] == "Жила, ресурсы есть.") {
-									Object4.push("Жила");
-								}
-						}
-					}
-				}
-					
-			choosingObjects(); // автопереход на следующий экран
-			
-		}
-		
-		function choosingObjects() {
-		
-			imageBarUpdateImg = ("img/tlwa/asteroid.png");
-			imageBarUpdate();
-			
-			checkPlayerStillAlive ();
-				
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-			journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
-			journeyBarUpdate();
-
-			if (ShipStillAlive == false) {
-					actionBarUpdateText = ("<br>&nbsp&nbsp&nbsp" + DeadMessageDeathOnAsteroid);
-					actionBarUpdate();
-					buttonBarUpdateText = ("<input type='button' value='Далее' onclick='flightIsEndYouAreDead()'>");
-					buttonBarUpdate();
-				
-			} else if (ShipStillAlive == true) {
-											// ИГРОК ВЫБИРАЕТ ОБЪЕКТ ДЛЯ ДОБЫЧИ ИЛИ УЛЕТАЕТ
-											
-			
-					if (Object1.length == 0) {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Здесь ничего нет, кроме космической пыли.");
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='Улететь' onclick='generateAsteroids()'>");
-						buttonBarUpdate();
-						imageBarUpdateImg = ("img/tlwa/spill.png");
-						imageBarUpdate();
-					}
-					
-					else if (Object2.length == 0) {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объект астероида:<br>1. " +Object1[0]);
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
-						buttonBarUpdate();
-					}
-					
-					else if (Object3.length == 0) {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]);
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
-						buttonBarUpdate();
-					}
-					
-					else if (Object4.length == 0) {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]+ "<br>3. " +Object3[0]);
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object3[3] + "' onclick='miningObject3()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
-						buttonBarUpdate();
-					}
-					
-					else {
-						actionBarUpdateText = ("<br>&nbsp&nbsp&nbspАстероид " +AsteroidNameChosen+ ":<br><br>Аномалия — " +Anomaly[0]+ " (" +Anomaly[3]+ ").<br><br>Объекты астероида:<br>1. " +Object1[0]+ "<br>2. " +Object2[0]+ "<br>3. " +Object3[0]+ "<br>4. " +Object4[0]);
-						actionBarUpdate();
-						buttonBarUpdateText = ("<input type='button' value='" + Object1[3] + "' onclick='miningObject1()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object2[3] + "' onclick='miningObject2()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object3[3] + "' onclick='miningObject3()'>&nbsp&nbsp&nbsp<input type='button' value='" + Object4[3] + "' onclick='miningObject4()'>&nbsp&nbsp&nbsp<input type='button' value='Улететь' onclick='generateAsteroids()'>");
-						buttonBarUpdate();
-					}
-			}
-		}
-		
-		function miningObject1() {
-		ObjSelection = 1;
-		miningChosenObject();
-		}
-		
-		function miningObject2() {
-		ObjSelection = 2;
-		miningChosenObject();
-		}
-		
-		function miningObject3() { 
-		ObjSelection = 3;
-		miningChosenObject();
-		}
-		
-		function miningObject4() {
-		ObjSelection = 4;
-		miningChosenObject();
-		}
-		
-		function anomalyCausesDamage() {
-			var ChanceOfAnomalyDamage = 0;
-			var ShipEquipDamage = 0; // доп урон оборуд
-		
-								// потери из-за аномалии
-								ChanceOfAnomalyDamage = parseInt(getRandomInt(1, 100));
-								if (ChanceOfAnomalyDamage <= Anomaly[1]) {
-									if (Anomaly[4] == "топлива") {
-										ShipFuel = parseInt(ShipFuel) - parseInt(Anomaly[2]);
-										AlertText = "&nbsp&nbsp&nbspПри посадке потеряно " +Anomaly[2]+ " тонн топлива.<br><br>";
-									} else if (Anomaly[4] == "корпуса") {
-										ShipHull = parseInt(ShipHull) - parseInt(Anomaly[2]);
-										AlertText = "&nbsp&nbsp&nbspПри посадке был поврежден корпус на " +Anomaly[2]+ "%.<br><br>";
-										ShipEquipDamage = parseInt(getRandomInt(0, 2));
-										if (ShipEquipDamage !== 0); {
-											ShipEquip = ShipEquip - ShipEquipDamage;
-											AlertText = "&nbsp&nbsp&nbspПри посадке был поврежден корпус на " +Anomaly[2]+ "% и оборудование на " +ShipEquipDamage+ "%.<br><br>";
-										}
-									}
-								}
-								else {
-								AlertText = "&nbsp&nbsp&nbspПовреждений и потерь топлива удалось избежать.<br><br>";
-								}
-		}
-		
-		function miningChosenObject() {
-		
-					var AnomalyDamageRand = Math.floor(Math.random() * ProblemMatrix[2].length); // !!!!!!!!после! успешной добычи перебрасываем величину урона Аномалии
-					Anomaly[2] = ProblemMatrix[2][AnomalyDamageRand];
-					
-					var NewMiningAttempt = 0; // попытка
-					var NewMiningAttemptExpenses = 0; // расходы на эту конкретную попытку внутри попытки
-					var TotalAttemptExpenses = 0; // расходы на все попытки внутри попытки
-					var ShipHullOld = ShipHull; // для отчетов
-						
-					if (ObjSelection == 1) { // нажали 1
-						
-							if (Object1[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
-								actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
-								buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
-							}
-							else {
-								for (; Object1[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикла не нужен - процесс добычи
-								
-									NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
-									NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
-									TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
-								}	
-								
-								anomalyCausesDamage();
-								
-								if (Object1[0] == "Ледник, ресурсы есть.") { // Ледник? - вознаграждение
-									Object1[0] = "Пустошь, ресурсов нет.";
-									Object1[3] = "Пустошь";
-									ShipFuel = parseInt(ShipFuel) + parseInt(Object1[2]);
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object1[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								} else { //  значит жила
-									Object1[0] = "Пустошь, ресурсов нет.";
-									Object1[3] = "Пустошь";
-									ShipHullOld = ShipHull;
-									ShipHull = parseInt(ShipHull) + parseInt(Object1[2]);
-									if (ShipHull >= 100) {
-										ShipHull = 100;
-									}
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								}
-							
-							actionBarUpdateText = (AlertText + SuccessfulMiningText);
-							buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
-							}
-					 
-					}
-			
-					else if (ObjSelection == 2) { // если игрок нажал цифру 2, то проверяем есть ли объект 2 (добыча) или его нет (улетаем)
-						
-							if (Object2[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
-								actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
-								buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
-							}
-							else {
-								for (; Object2[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикла не нужен
-								
-									NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
-									NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
-									TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
-								}	
-								
-								anomalyCausesDamage();
-								
-								if (Object2[0] == "Ледник, ресурсы есть.") { // Ледник?
-									Object2[0] = "Пустошь, ресурсов нет.";
-									Object2[3] = "Пустошь";
-									ShipFuel = parseInt(ShipFuel) + parseInt(Object2[2]);
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object2[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								} else { //  значит жила
-									Object2[0] = "Пустошь, ресурсов нет.";
-									Object2[3] = "Пустошь";
-									ShipHullOld = ShipHull;
-									ShipHull = parseInt(ShipHull) + parseInt(Object2[2]);
-									if (ShipHull >= 100) {
-										ShipHull = 100;
-									}
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								}
-							
-							actionBarUpdateText = (AlertText + SuccessfulMiningText);
-							buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
-							}
-						
-					}
-			
-					else if (ObjSelection == 3) {
-						
-							if (Object3[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
-								actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
-								buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
-							}
-							else {
-								for (; Object3[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикла не нужен
-								
-									NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
-									NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
-									TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
-								}	
-								
-								anomalyCausesDamage();
-								
-								if (Object3[0] == "Ледник, ресурсы есть.") { // Ледник?
-									Object3[0] = "Пустошь, ресурсов нет.";
-									Object3[3] = "Пустошь";
-									ShipFuel = parseInt(ShipFuel) + parseInt(Object3[2]);
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object3[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								} else { //  значит жила
-									Object3[0] = "Пустошь, ресурсов нет.";
-									Object3[3] = "Пустошь";
-									ShipHullOld = ShipHull;
-									ShipHull = parseInt(ShipHull) + parseInt(Object3[2]);
-									if (ShipHull >= 100) {
-										ShipHull = 100;
-									}
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								}
-							
-							actionBarUpdateText = (AlertText + SuccessfulMiningText);
-							buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
-							}
-						
-					}
-			
-					else if (ObjSelection == 4) {
-						
-							if (Object4[0] == "Пустошь, ресурсов нет.") { // пустошь или нет
-								actionBarUpdateText = ("<br>&nbsp&nbsp&nbspПоказания гравиметра: нет полезных ресурсов.");
-								buttonBarUpdateText = ("<input type='button' value='Продолжить' onclick='choosingObjects()'>");
-							}
-							else {
-								for (; Object4[1] >= NewMiningAttempt; ShipFuel = ShipFuel - NewMiningAttemptExpenses) { // [0] параметр цикла не нужен
-								
-									NewMiningAttempt = parseInt(getRandomInt(1, 100)); // кидаем 1к100
-									NewMiningAttemptExpenses = parseInt(getRandomInt(1, 2)); // теряем 1-2 топливо при добыче
-									TotalAttemptExpenses = parseInt(TotalAttemptExpenses) + parseInt(NewMiningAttemptExpenses);
-								}	
-								
-								anomalyCausesDamage();
-								
-								if (Object4[0] == "Ледник, ресурсы есть.") { // Ледник?
-									Object4[0] = "Пустошь, ресурсов нет.";
-									Object4[3] = "Пустошь";
-									ShipFuel = parseInt(ShipFuel) + parseInt(Object4[2]);
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз ледника добыт водород, из котрого создано " +Object4[2]+ " тонн топлива. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								} else { //  значит жила
-									Object4[0] = "Пустошь, ресурсов нет.";
-									Object4[3] = "Пустошь";
-									ShipHullOld = ShipHull;
-									ShipHull = parseInt(ShipHull) + parseInt(Object4[2]);
-									if (ShipHull >= 100) {
-										ShipHull = 100;
-									}
-									SuccessfulMiningText = "&nbsp&nbsp&nbspИз жилы добыты металлы, произведен ремонт несущей конструкции и обшивки с " +ShipHullOld+ "% до " +ShipHull+ "%-ного состояния. На добычу потрачено " +TotalAttemptExpenses+ " тонн топлива.";
-									ShipEquip = ShipEquip - 1; // оборудование изнашивается
-								}
-								
-							actionBarUpdateText = (AlertText + SuccessfulMiningText);
-							buttonBarUpdateText = ("<input type='button' value='На орбиту' onclick='choosingObjects()'>");
-							}
-						
-					}
-					
-			buttonBarUpdate();
-			actionBarUpdate();
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();		
-		}
-		
-		function debugBarUpdate() { // отладочная панель
-			document.getElementById("debugBar").innerHTML = ("<input type='button' value='+10%way' onclick='plusWay()'> <input type='button' value='-10%way' onclick='minusWay()'> <input type='button' value='+10fuel' onclick='plusFuel()'> <input type='button' value='-10fuel' onclick='minusFuel()'> <input type='button' value='+10hull' onclick='plusHull()'> <input type='button' value='-10hull' onclick='minusHull()'> <input type='button' value='+10equip' onclick='plusEquip()'> <input type='button' value='-10equip' onclick='minusEquip()'> <input type='button' value='в финал!' onclick='plusFinalOfStory()'>");
-		}
-		
-		function plusFinalOfStory() {
-		TravelLength = +TravelLength + 41240;
-		pointInSpace = TravelLength;
-		ShipFuel = +ShipFuel + 400;
-		ShipHull = +ShipHull + 100;
-		ShipEquip = +ShipEquip + 100;
-		planetRandomizer()
-		finalTriangleOfStars()
-		}
-		
-		function plusFuel() {
-			ShipFuel = +ShipFuel + 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function minusFuel() {
-			ShipFuel = +ShipFuel - 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function plusHull() {
-			ShipHull = +ShipHull + 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function minusHull() {
-			ShipHull = +ShipHull - 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function plusEquip() {
-			ShipEquip = +ShipEquip + 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function minusEquip() {
-			ShipEquip = +ShipEquip - 10;
-			statusBarUpdateText = "Диагостика состояния<br>    бортовых систем ''USE'': <br><br>   • Топливо: " +ShipFuel+ " тонн; <br>   • Корпус: " +ShipHull+ "%; <br>   • Оборудование: " +ShipEquip+ "%.";
-			statusBarUpdate();
-		}
-		
-		function plusWay() {
-			TravelLength = +TravelLength + 4124;
-			journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
-			journeyBarUpdate();
-		}
-		
-		function minusWay() {
-			TravelLength = +TravelLength - 4124;
-			journeyBarUpdateText = "Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +TravelYears+ " лет; <br>   • преодолено: "+TravelLength+" млрд км ("+ (100*TravelLength/max_TravelLength).toFixed(0) +"%); <br>   •  осталось: " +(max_TravelLength - TravelLength)+ " млрд км.";
-			journeyBarUpdate();
-		}
-
-		
-			// ИНТЕРФЕЙС
-			
-			var statusBarUpdateText = "";
-			var journeyBarUpdateText = "";
-			var actionBarUpdateText = "";
-			var imageBarUpdateImg = "background.png";
-			var musicBarUpdateFile = "<audio controls autoplay><source src='music/P_C_III_-_01_-_Exit_Exit_cut.mp3' type='audio/mpeg'></audio>";
-			var buttonBarUpdateText = "";
-			
-			// ОСНОВНЫЕ ПЕРЕМЕННЫЕ
-
-			const max_TravelLength = 41248; // расстояние до Альфы Центавра, Астры и Бейкера, среднее, млрд км
-			const SpeedCoefficient = 4.1248; // млрд км за год - удалить, заменить формулы
-					
-			const p_TravelLength = 39924; // расстояние до Проксимы Центавра, млрд км 0 1321 1327
-			const a_TravelLength = 41245; // расстояние до Альфы Центавра Астры, млрд км 1321 0 6
-			const b_TravelLength = 41251; // расстояние до Альфы Центавра Бейкера, млрд км 1327 6 0
-
-			const GreenZone = 0; // первая треть пути
-			const YellowZone = 13749 // вторая треть пути
-			const RedZone = 27499 // третья треть пути
-			
-			const NumberOfProximaCentauriPlanets = 1;
-			const NumberOfAstraCentauriPlanets = 3;
-			const NumberOfBakerCentauriPlanets = 4;
-			const NumberOfSolarPlanets = 4;
-			
-			var pointInSpace = 0; // координата в финальном треугольнике
-			
-			var DeadMessage = ""; // точная причина смерти
-			var DeadMessageDeathInSpace = "Мрак поглотил остов неуправляемого корабля, движущегося в бесконечность.";
-			var DeadMessageDeathOnAsteroid = "Корабль не смог покинуть безжизненную поверхность астероида.";
-			var DeadMessageDeathDuringLanding = "Не справившись с перегрузками, USE разбилась о поверхность планеты.";
-			var ShipStillAlive = true;
-						
-			var PlayerInYellowZone = false;
-			var PlayerInRedZone = false;
-			var DifficultyModifier = 0;
-			
-			var ShipFuel = 150; // запас топлива, восстанавливается
-			var ShipHull = 100; // прочность корпуса, восстанавливается
-			var ShipEquip = 100; // сохранность оборудования, не восстанавливается
-			var ShipWeight = parseInt(ShipFuel) + 10; // масса корабля, топливо + конструкция ракеты и ценнейший груз 15т
-
-			// СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ
-
-			var Аs1Dist = 0; // дистанция до 1-ого астероида
-			var Аs1Size = 0; // размер 1-ого астероида
-			var Аs1Prob = 0; // сложность 1-ого астероида
-
-			var Аs2Dist = 0; // дистанция до 2-ого астероида
-			var Аs2Size = 0; // размер 2-ого астероида
-			var Аs2Prob = 0; // сложность 2-ого астероида
-
-			var AsDistTotal = 0 // дистанция выбранного астероида
-			var АsSizeTotal = 0 // размер выбранного астероида
-			var АsProbTotal = 0 // сложность выбранного астероида
-
-			var TravelLength = 0; // суммарно пройденный в игре путь, млрд км
-			var TravelYears = 0; // время в игре, лет
-
-			var AstSelection = 0;  
-			var ObjSelection = 0;  
-			var MenuSelection = 0;
-
-			var АsDistTotal = 0;
-			var	АsSizeTotal = 0;
-			var АsProbTotal = 0;
-
-			var AlertText = ""; // повреждения от аномалии
-			var SuccessfulMiningText = ""; // что добыли
-			
-			//  ГЕНЕРАТОР АСТЕРОИДОВ
-			
-			var AsteroidNameGenerator = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"];
-			var AsteroidNameLength1 = 0;
-			var AsteroidNameLength2 = 0;
-			var AsteroidName1 = "";
-			var AsteroidName2 = "";
-			var AsteroidNameChosen = "Forgotten";
-			
-			var exampleShipFuelTempExpences = 0;
-			var ShipFuelTempExpences1 = 0; // расход топлива на прыжок к первому астероиду
-			var ShipFuelTempExpences2 = 0; // расход топлива на прыжок ко второму астероиду
-			
-			var ProblemMatrix = [
-				["значительная гравитация", "ресурсы глубокого залегания", "свита мелких астероидов", "искривленная поверхность", "высокая скорость вращения", "химически-активный грунт"], // названия проблем, ряд 0
-				[10, 20, 20, 30], // вероятность повреждения, ряд 1
-				[1, 2, 2, 3, 3, 3, 4, 4, 5] // размер штрафа, ряд 2
-				];
-				
-			var Anomaly = []; 
-			
-			var ObjectMatrix = [
-				["Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Ледник, ресурсы есть.", "Жила, ресурсы есть.", "Пустошь, ресурсов нет."], // объекты и добываемый ресурс, ряд 0
-				[50, 40, 30, 20, 10], // вероятность неуспешного бурения, ряд 1
-				[10, 15, 15, 20, 20, 20, 25, 25, 30] // размер добычи, ряд 2
-				];
-					
-			var Object1 = []; // задаем имеющиеся четыре пустых массива для будущих объектов
-			var Object2 = [];
-			var Object3 = [];
-			var Object4 = [];
-			
-			// ГЕНЕРАТОР ПЛАНЕТ
-			
-			var CentauriPlanetMatrix = [
-				["Проксима I", "Астра I", "Астра II", "Астра III", "Бейкер I", "Бейкер II", "Бейкер III", "Бейкер IV"], 	// PlanetName [0]
-				["Cold", "Cold", "Warm", "Warm", "Warm", "Hot", "Hot", "Hot"], 												// TemperatureRegime [1] жара RED 0-2 2-3 4-3 GREY 4 2 0
-				["Lifeless", "Lifeless", "Lifeless", "Mosses", "Mosses", "Forests", "Forests", "Forests"], 					// OrganicPresence [2] наличие органики GREEN 0-3 2-2 4-3 GREY 4 2 0
-				["Dry", "Dry", "Dry", "Humid", "Humid", "Flood", "Flood", "Flood"] 											// WaterSaturation [3] насыщенность водой BLUE 0-3 2-2 4-3 GREY 4 2 0
-				];
-				
-			var ProximaPlanetPreparedMatrix = [];
-			var AstraPlanetPreparedMatrix = [];
-			var BakerPlanetPreparedMatrix = [];
-			
 			var SolarPlanetPreparedMatrix = [
 			["Меркурий", "Hot", "Lifeless", "Dry"],
 			["Венера", "Hot", "Mosses", "Humid"],
 			["Земля", "Warm", "Forests", "Flood"],
 			["Марс", "Cold", "Mosses", "Dry"]
 			];
-			
-			var SpectralAnalysisResult = []; // массив одной планеты с "графикой"
-			
-			var LivablePlanet = 0; // "жизнябельность" планеты - пригодность для жилья, надо набрать 4 или более пунктов
-			
-			// ГЕНЕРАТОР СОБЫТИЙ
-			
-			var EventWasShown01 = false;
-			var EventWasShown02 = false;
-			var EventWasShown03 = false;
-			var EventWasShown04 = false;
-			
-			// СЧЁТЧИКИ
-			
-			var TotalCountFuelSpent = 0;
-			var TotalCountAsteroidsVisited = 0;
-			var TotalCountObjectsMined = 0;
+		
+			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+			document.getElementById("planet1").innerHTML = SolarPlanetPreparedMatrix[0][0] + ": " + doSpectralAnalysis(SolarPlanetPreparedMatrix[0]) + "<img src='img/tlwa/FFFAFAplank.png'>"; // склеиваем строку и выводим
+			doSpectralAnalysis (SolarPlanetPreparedMatrix[1])
+			document.getElementById("planet2").innerHTML = SolarPlanetPreparedMatrix[1][0] + ": " + doSpectralAnalysis(SolarPlanetPreparedMatrix[1]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			doSpectralAnalysis (SolarPlanetPreparedMatrix[2])
+			document.getElementById("planet3").innerHTML = SolarPlanetPreparedMatrix[2][0] + ": " + doSpectralAnalysis(SolarPlanetPreparedMatrix[2]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			doSpectralAnalysis (SolarPlanetPreparedMatrix[3])
+			document.getElementById("planet4").innerHTML = SolarPlanetPreparedMatrix[3][0] + ": " + doSpectralAnalysis(SolarPlanetPreparedMatrix[3]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+		}
+		
+		function doAnalysisProxima() {
+			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div>");
+			document.getElementById("planet1").innerHTML = systemsOfPlanet.planetsOfProxima[0][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfProxima[0]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+		}
+		
+		function doAnalysisAstra() {
+			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div>");
+			document.getElementById("planet1").innerHTML = systemsOfPlanet.planetsOfAstra[0][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfAstra[0]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			document.getElementById("planet2").innerHTML = systemsOfPlanet.planetsOfAstra[1][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfAstra[1]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			document.getElementById("planet3").innerHTML = systemsOfPlanet.planetsOfAstra[2][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfAstra[2]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+		}
+		
+		function doAnalysisBaker() {
+			document.getElementById("PlanetBoxInActionBar").innerHTML = ("<div id='planet1'></div><br> <div id='planet2'></div><br> <div id='planet3'></div><br> <div id='planet4'></div>");
+			document.getElementById("planet1").innerHTML = systemsOfPlanet.planetsOfBaker[0][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfBaker[0]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			document.getElementById("planet2").innerHTML = systemsOfPlanet.planetsOfBaker[1][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfBaker[1]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			document.getElementById("planet3").innerHTML = systemsOfPlanet.planetsOfBaker[2][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfBaker[2]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+			document.getElementById("planet4").innerHTML = systemsOfPlanet.planetsOfBaker[3][0] + ": " + doSpectralAnalysis(systemsOfPlanet.planetsOfBaker[3]) + "<img src='img/tlwa/FFFAFAplank.png'>";
+		}
+	
+			// ОТЛАДОЧНАЯ ПАНЕЛЬ
 
+		function updateDebugBar() {
+			document.getElementById("debugBar").innerHTML = ("<input type='button' value='+10%way' onclick='plusWay()'> <input type='button' value='-10%way' onclick='minusWay()'> <input type='button' value='+10fuel' onclick='plusFuel()'> <input type='button' value='-10fuel' onclick='minusFuel()'> <input type='button' value='+10hull' onclick='plusHull()'> <input type='button' value='-10hull' onclick='minusHull()'> <input type='button' value='+10equip' onclick='plusEquip()'> <input type='button' value='-10equip' onclick='minusEquip()'> <input type='button' value='в финал!' onclick='plusFinalOfStory()'>");
+		}
+		
+		function plusFinalOfStory() {
+		ship.travelLength += 41000;
+		ship.fuel += 400;
+		ship.hull += 100;
+		ship.equip += 100;
+		systemsOfPlanet = generateSystemsOfPlanet();
+		systemsOfPlanet.point = maxTravelLength - 3150;
+		finalTriangleOfStars();
+		}
+		
+		function plusFuel() {
+			ship.fuel += 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function minusFuel() {
+			ship.fuel -= 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function plusHull() {
+			ship.hull += 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function minusHull() {
+			ship.hull -= 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function plusEquip() {
+			ship.equip += 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function minusEquip() {
+			ship.equip -= 10;
+			updateStatusBar(ship.displayStatus());
+		}
+		
+		function plusWay() {
+			ship.travelLength += 5124;
+			updateJourneyBar("Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км ("+ Math.round(100*ship.travelLength/maxTravelLength) +"%); <br>   •  осталось: " +(maxTravelLength - ship.travelLength)+ " млрд км.");
+		}
+		
+		function minusWay() {
+			ship.travelLength -= 5124;
+			updateJourneyBar("Бортовой журнал<br>    полёта до Альфы Центавра: <br><br>   • миссия продолжается: " +ship.travelYears+ " лет; <br>   • преодолено: "+ship.travelLength+" млрд км ("+ Math.round(100*ship.travelLength/maxTravelLength) +"%); <br>   •  осталось: " +(maxTravelLength - ship.travelLength)+ " млрд км.");
+		}
 	</script>
 	</body>
 	</html>
-
-
