@@ -1,0 +1,145 @@
+<!doctype html>
+<head>
+    <title>Лавкрафт-бинго</title>
+    <meta charset="utf-8">
+	<style type="text/css">
+    @media print {
+		@page {size: landscape}
+		#printBtn { display:none; } <!-- запрещаем отображать на распечатанном листе кнопки -->
+    }
+	</style>
+    </head>
+<body onload="generateBingoList()">
+   
+   <TABLE BORDER="0" WIDTH="100%" HEIGHT="100%">
+		<TR>
+			<TD align="center">
+				<TABLE BORDER="0" WIDTH="800" HEIGHT="480" BGCOLOR="#FFFFFF"> <!-- лист -->
+					<TR>
+						<TD HEIGHT="150"> <!-- приветствие -->
+							<H2>Лавкрафт-бинго</H2>
+							<P>Перед чтением нового рассказа распечатай эту страничку. </P>
+							<P>Каждый раз, встречая в тексте прилагательное из таблицы — зачеркивай его. </P>
+							<P>Как только будут зачеркнуты пять ячеек подряд в любой строке, столбце или диагонали — встань и восславь Древних!</P>
+						</TD>
+					</TR>
+					<TR>
+						<TD> <!-- таблица -->
+							<TABLE BORDER="2" WIDTH="800" HEIGHT="300">
+								<TR>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell1" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell2" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell3" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell4" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell5" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+								</TR>
+								<TR>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell6" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell7" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell8" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell9" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell10" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+								</TR>
+								<TR>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell11" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell12" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell13" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell14" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell15" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+								</TR>
+								<TR>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell16" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell17" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell18" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell19" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell20" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+								</TR>
+								<TR>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell21" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell22" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell23" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell24" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+									<TD WIDTH="160" HEIGHT="60">
+										<div id="cell0" style="padding: 2px; font-size:12pt;" align="center"><!-- id= --></div>
+									</TD>
+								</TR>
+							</TABLE>
+						</TD>
+					</TR>
+					<TR>
+						<TD HEIGHT="30" align="center"> <!-- кнопки генерации и распечатки -->
+							<button id="printBtn" class="button" onclick="javascript: generateBingoList();">Сгенерировать новый</button>
+							<button id="printBtn" class="button" onclick="javascript: print();">Распечатать лист</button>
+						</TD>
+					</TR>
+				</TABLE>
+			</TD>
+		</TR>
+	</TABLE>
+   
+   
+   <script>
+   
+       function generateBingoList() {
+		var bingoContent = ["Богомерзкий", "Невообразимый", "Богохульственный", "Непостижимый", "Зловещий", "Отталкивающий", "Ужасающий", "Омерзительный", "Запретный", "Извращенный", "Циклопический", "Проклятый", "Древний", "Гротескный", "Неестественный", "Мрачный", "Первобытный", "Кошмарный", "Отвратительный", "Жуткий", "Сумасшедший", "Тошнотворный", "Неправильный", "Предвещающий", "Ущербный"];
+		for (var i = 0; i < 25; i++) {
+			var rndArrElement = Math.floor(Math.random() * bingoContent.length)
+			updateBingoCell(i, bingoContent[rndArrElement])
+			bingoContent.splice (rndArrElement,1); // удаляем записанное из массива bingoContent
+		}
+	}
+	
+	function updateBingoCell(number, word) {
+			document.getElementById("cell" + number).innerHTML = (word);
+	}
+	
+	</script>
+</body>
