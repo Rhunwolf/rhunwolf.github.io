@@ -1,0 +1,1153 @@
+body{
+    padding: 0px;
+    margin: 0px;
+    background: #2f64c6;
+    color: black;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    font-family: Roboto, Noto, Helvetica, Verdana, sans-serif;
+    font-size: 16px;
+    overflow: hidden;
+}
+a,
+input,
+textarea,
+select {
+  outline: 0;
+}
+a {
+  text-decoration: none;
+  color: #2196f3;
+}
+
+div{
+    position: relative;
+    transform: translateZ(0px);
+}
+
+div.header-players{
+    text-align: center;
+    background: #efe7dc;
+    z-index: -3;
+    padding-bottom: 1px;
+    border-bottom: 1px solid #9a8068;
+}
+
+div.header-player{
+    vertical-align: top;
+    display: inline-block;
+    width: 33%;
+    max-width: 200px;
+    margin-left: 1px;
+    margin-top: 1px;
+    background: #9a8068;
+    cursor: pointer;
+}
+
+/*div.header-player.red{
+    background: #3a2522;
+}
+
+div.header-player.green{
+    background: #223018;
+}
+
+div.header-player.violet{
+    background: #2c243f;
+}
+
+div.header-player.yellow{
+    background: rgba(32,64,0,1);
+}*/
+
+div.header-player-padding{
+    padding: 10px 0px;
+}
+
+div.load-winpoint{
+    position: absolute;
+    z-index: 1000;
+    display: block;
+    background-size: 100% 100%;
+    width: 34px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    color: white;
+    padding: 7px 0px;
+    text-align: center;
+}
+
+div.load-winpoint{
+    background-image: url(i/points/p.png);
+    color: black;
+}
+
+div.load-winpoint.gray{
+    background-image: url(i/points/p2.png);
+    color: black;
+}
+
+div.pl-points{
+    vertical-align: top;
+    display: inline-block;
+    background-size: 100% 100%;
+    width: 34px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    color: white;
+    padding: 7px 0px;
+    text-align: center;
+}
+
+div.header-player.red div.pl-points{
+    background-image: url(i/giens/p.png);
+    color: #fff0f0;
+}
+
+div.header-player.green div.pl-points{
+    background-image: url(i/valkiries/p.png);
+    color: #f0fff0;
+}
+
+div.header-player.violet div.pl-points{
+    background-image: url(i/impeccable/p.png);
+    color: #fff0ff;
+}
+
+div.header-player.yellow div.pl-points{
+    background-image: url(i/slavers/p.png);
+    color: #fffff0;
+}
+
+div.pl-base-cards{
+    vertical-align: top;
+    display: inline-block;
+    background-size: 100% 100%;
+    width: 26px;
+    height: 20px;
+    padding: 7px 0px;
+    margin: 0px 4px;
+    font-size: 20px;
+    line-height: 1;
+    color: white;
+    text-align: center;
+}
+
+div.header-player.red div.pl-base-cards{
+    background-image: url(i/giens/1.jpg);
+    text-shadow: 0px -2px 4px #792519, 0px 2px 4px #792519, 0px 0px 4px #792519;
+}
+
+div.header-player.green div.pl-base-cards{
+    background-image: url(i/valkiries/1.jpg);
+    text-shadow: 0px -2px 4px #3f5c2f, 0px 2px 4px #3f5c2f, 0px 0px 4px #3f5c2f;
+}
+
+div.header-player.violet div.pl-base-cards{
+    background-image: url(i/impeccable/1.jpg);
+    text-shadow: 0px -2px 4px #311e63, 0px 2px 4px #311e63, 0px 0px 4px #311e63;
+}
+
+div.header-player.yellow div.pl-base-cards{
+    background-image: url(i/slavers/1.jpg);
+    text-shadow: 0px -2px 4px #73520b, 0px 2px 4px #73520b, 0px 0px 4px #73520b;
+}
+
+div.pl-injured-cards{
+    vertical-align: top;
+    display: inline-block;
+    background-size: 100% 100%;
+    width: 26px;
+    height: 20px;
+    padding: 7px 0px;
+    margin: 0px 4px;
+    font-size: 20px;
+    line-height: 1;
+    color: white;
+    z-index: 1;
+    text-align: center;
+}
+
+div.header-player.red div.pl-injured-cards:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    z-index: -1;
+    background-size: 100% 100%;
+    background-image: url(i/giens/1.jpg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0.7;
+}
+
+div.header-player.red div.pl-injured-cards{
+    text-shadow: 0px -2px 4px #792519, 0px 2px 4px #792519, 0px 0px 4px #792519;
+}
+
+div.header-player.green div.pl-injured-cards:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    z-index: -1;
+    background-size: 100% 100%;
+    background-image: url(i/valkiries/1.jpg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0.7;
+}
+
+div.header-player.green div.pl-injured-cards{
+    text-shadow: 0px -2px 4px #3f5c2f, 0px 2px 4px #3f5c2f, 0px 0px 4px #3f5c2f;
+}
+
+div.header-player.violet div.pl-injured-cards:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    z-index: -1;
+    background-size: 100% 100%;
+    background-image: url(i/impeccable/1.jpg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    opacity: 0.7;
+}
+
+div.header-player.violet div.pl-injured-cards{
+    text-shadow: 0px -2px 4px #311e63, 0px 2px 4px #311e63, 0px 0px 4px #311e63;
+}
+
+div.header-player.yellow div.pl-injured-cards:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    z-index: -1;
+    background-size: 100% 100%;
+    background-image: url(i/slavers/1.jpg);
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    opacity: 0.7;
+}
+
+div.header-player.yellow div.pl-injured-cards{
+    text-shadow: 0px -2px 4px #73520b, 0px 2px 4px #73520b, 0px 0px 4px #73520b;
+}
+
+div.desk-day{
+    background: #ead5b9;
+    margin: 10px 0px 5px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+div.desk-points{
+    background: #ead5b9;
+    text-align: center;
+}
+
+div.location{
+    vertical-align: top;
+    display: inline-block;
+    font-size: 20px;
+    line-height: 1;
+    width: 32%;
+    max-width: 320px;
+    margin: 0px;
+    color: white;
+    text-align: center;
+    border-radius: 3%;
+    margin: 0.5%;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+div.location.boom{
+    opacity: 0;
+    transform: scale(2) rotate(270deg);
+    z-index: 10000;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+div.location.userstate{
+    display: block;
+    width: auto;
+    max-width: none;
+    z-index: 10;
+}
+
+div.location.userstate div.l-back{
+    position: absolute;
+    width: 32%;
+    max-width: 320px;
+}
+
+div.location.userstate div.l-cards{
+    position: relative;
+    width: auto;
+    text-align: left;
+    left: auto;
+    top: auto;
+    margin-left: 5%;
+}
+
+div.location.userstate div.l-cards div.d-card{
+    width: 24%;
+    margin: 0.5%;
+}
+
+div.location.userstate .l-cards-count{
+    display: none;
+}
+
+div.location-back{
+    width: 100%;
+    height: 0px;
+    padding-bottom: 72.8%;
+    background-size: 100% 100%;
+    border-radius: 3%;
+}
+
+div.location.z1 div.location-back{ background-image: url(i/points/z1.jpg); }
+div.location.z2 div.location-back{ background-image: url(i/points/z2.jpg); }
+div.location.z3 div.location-back{ background-image: url(i/points/z3.jpg); }
+div.location.z4 div.location-back{ background-image: url(i/points/z4.jpg); }
+div.location.k1 div.location-back{ background-image: url(i/points/k1.jpg); }
+div.location.k2 div.location-back{ background-image: url(i/points/k2.jpg); }
+div.location.k3 div.location-back{ background-image: url(i/points/k3.jpg); }
+div.location.k4 div.location-back{ background-image: url(i/points/k4.jpg); }
+div.location.h1 div.location-back{ background-image: url(i/points/h1.jpg); }
+div.location.h2 div.location-back{ background-image: url(i/points/h2.jpg); }
+div.location.h3 div.location-back{ background-image: url(i/points/h3.jpg); }
+div.location.s1 div.location-back{ background-image: url(i/points/s1.jpg); }
+div.location.s2 div.location-back{ background-image: url(i/points/s2.jpg); }
+div.location.s3 div.location-back{ background-image: url(i/points/s3.jpg); }
+div.location.v1 div.location-back{ background-image: url(i/points/v1.jpg); }
+div.location.v2 div.location-back{ background-image: url(i/points/v2.jpg); }
+div.location.v3 div.location-back{ background-image: url(i/points/v3.jpg); }
+div.location.b1 div.location-back{ background-image: url(i/points/b1.jpg); }
+div.location.b2 div.location-back{ background-image: url(i/points/b2.jpg); }
+div.location.b3 div.location-back{ background-image: url(i/points/b3.jpg); }
+
+div.l-points{
+    z-index: 10;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    background-size: 100% 100%;
+    width: 34px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 7px 0px;
+    text-align: center;
+    background-image: url(i/points/p.png);
+    color: black;
+}
+
+div.location.exists div.l-points{
+    background-image: url(i/points/p2.png);
+}
+
+.header-hand .hand-base.red{
+    background-image: url(i/giens/l.png);
+    background-size: contain;
+}
+
+.header-hand .hand-base.violet{
+    background-image: url(i/impeccable/l.png);
+    background-size: contain;
+}
+
+.header-hand .hand-base.green{
+    background-image: url(i/valkiries/l.png);
+    background-size: contain;
+}
+
+.hand-base.yellow{
+    background-image: url(i/slavers/l.png);
+    background-size: contain;
+}
+
+div.l-cards-count{
+    position: absolute;
+    left: 15%;
+    right: 0%;
+    top: 35%;
+    text-align: center;
+    font-size: 50px;
+    z-index: 2;
+    text-shadow: 2px 2px 0px black, -2px -2px 0px black, -2px 2px 0px black, 2px -2px 0px black;
+}
+
+div.l-cards{
+    position: absolute;
+    width: 55%;
+    top: 5%;
+    left: 25%;
+    text-align: left;
+}
+
+div.l-cards div.d-card{
+    width: 70%;
+    margin-right: -40%;
+    margin-bottom: -70%;
+}
+
+.d-card-text{
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 100%;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+div.d-card.v1 div.card{ background-image: url(i/valkiries/1.jpg); }
+div.d-card.v2 div.card{ background-image: url(i/valkiries/2.jpg); }
+div.d-card.v3 div.card{ background-image: url(i/valkiries/3.jpg); }
+div.d-card.v4 div.card{ background-image: url(i/valkiries/4.jpg); }
+div.d-card.v5 div.card{ background-image: url(i/valkiries/5.jpg); }
+div.d-card.i1 div.card{ background-image: url(i/impeccable/1.jpg); }
+div.d-card.i2 div.card{ background-image: url(i/impeccable/2.jpg); }
+div.d-card.i3 div.card{ background-image: url(i/impeccable/3.jpg); }
+div.d-card.i4 div.card{ background-image: url(i/impeccable/4.jpg); }
+div.d-card.if div.card{ background-image: url(i/impeccable/f.jpg); }
+div.d-card.s1 div.card{ background-image: url(i/slavers/1.jpg); }
+div.d-card.s2 div.card{ background-image: url(i/slavers/2.jpg); }
+div.d-card.s3 div.card{ background-image: url(i/slavers/3.jpg); }
+div.d-card.s4 div.card{ background-image: url(i/slavers/4.jpg); }
+div.d-card.ss div.card{ background-image: url(i/slavers/s.jpg); }
+div.d-card.h2d div.card{ background-image: url(i/slavers/h2d.jpg); }
+div.d-card.h11 div.card{ background-image: url(i/slavers/h11.jpg); }
+div.d-card.h2b div.card{ background-image: url(i/slavers/h2b.jpg); }
+div.d-card.g1 div.card{ background-image: url(i/giens/1.jpg); }
+div.d-card.g2 div.card{ background-image: url(i/giens/2.jpg); }
+div.d-card.g3 div.card{ background-image: url(i/giens/3.jpg); }
+div.d-card.g4 div.card{ background-image: url(i/giens/4.jpg); }
+
+.modal-card div.d-card{
+    display: block;
+    position: absolute;
+    width: auto;
+    max-width: none;
+    top: 60px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+}
+
+.modal-card .card{
+    box-shadow: 0px 0px 5px 1px black;
+}
+
+.modal-card, .modal-state{
+    position: static;
+}
+
+div.d-card.place-base{
+    -webkit-animation: placebase ease 0.8s normal; /* Safari 4.0 - 8.0 */
+    animation: placebase ease 0.8s normal;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes placebase {
+    0% {margin-top: -20%;margin-bottom: 21%;transform: scale(1.2);}
+    70% {transform: scale(1.1);}
+    100% {margin-top: 0.5%;margin-bottom: 0.5%;transform: scale(1);}
+}
+
+/* Standard syntax */
+@keyframes placebase {
+    0% {margin-top: -20%;margin-bottom: 21%;transform: scale(1.2);}
+    70% {transform: scale(1.1);}
+    100% {margin-top: 0.5%;margin-bottom: 0.5%;transform: scale(1);}
+}
+
+div.d-card.place-base2{
+    position: relative;
+    -webkit-animation: placebase2 ease 0.8s normal; /* Safari 4.0 - 8.0 */
+    animation: placebase2 ease 0.8s normal;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes placebase2 {
+    0% {margin-top: 21%;margin-bottom: -20%;transform: scale(1.05);}
+    70% {transform: scale(1.05);}
+    100% {margin-top: 0.5%;margin-bottom: 0.5%;transform: scale(1);}
+}
+
+/* Standard syntax */
+@keyframes placebase2 {
+    0% {margin-top: 21%;margin-bottom: -20%;transform: scale(1.05);}
+    70% {transform: scale(1.05);}
+    100% {margin-top: 0.5%;margin-bottom: 0.5%;transform: scale(1);}
+}
+
+div.d-card.boom{
+    -webkit-animation: boom ease 0.5s normal;
+    animation: boom ease 0.5s normal;
+}
+
+@-webkit-keyframes boom {
+    0% {margin-top: 0%;transform: scale(1) rotate(0deg);opacity: 1;}
+    100% {margin-top: -400%;transform: scale(2) rotate(270deg);opacity: 0;}
+}
+
+@keyframes boom {
+    0% {margin-top: 0%;transform: scale(1) rotate(0deg);opacity: 1;}
+    100% {margin-top: -400%;transform: scale(2) rotate(270deg);opacity: 0;}
+}
+
+div.d-card div.d-point{
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    margin-left: -26px;
+    width: 53px;
+    height: 64px;
+    background: url(i/point.png);
+    background-size: 100% 100%;
+    -webkit-animation: pointhelp ease-in-out 2s infinite; /* Safari 4.0 - 8.0 */
+    animation: pointhelp ease-in-out 2s infinite;
+}
+
+div.d-card.selected div.d-point{
+    display: none;
+}
+
+div.location > div.d-point{
+    display: none;
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    margin-left: -26px;
+    width: 53px;
+    height: 64px;
+    background: url(i/point.png);
+    background-size: 100% 100%;
+    -webkit-animation: pointhelp ease-in-out 2s infinite; /* Safari 4.0 - 8.0 */
+    animation: pointhelp ease-in-out 2s infinite;
+}
+
+div.location.selectable > div.d-point{
+    display: block;
+}
+
+div.button > div.d-point{
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    margin-left: -26px;
+    width: 53px;
+    height: 64px;
+    background: url(i/point.png);
+    background-size: 100% 100%;
+    -webkit-animation: pointhelp2 ease-in-out 2s infinite; /* Safari 4.0 - 8.0 */
+    animation: pointhelp2 ease-in-out 2s infinite;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes pointhelp {
+    0% {bottom: 115%;}
+    50% {bottom: 98%;}
+    100% {bottom: 115%;}
+}
+
+/* Standard syntax */
+@keyframes pointhelp {
+    0% {bottom: 115%;}
+    50% {bottom: 98%;}
+    100% {bottom: 115%;}
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes pointhelp2 {
+    0% {bottom: 155%;}
+    50% {bottom: 80%;}
+    100% {bottom: 155%;}
+}
+
+/* Standard syntax */
+@keyframes pointhelp2 {
+    0% {bottom: 155%;}
+    50% {bottom: 80%;}
+    100% {bottom: 155%;}
+}
+
+div.d-card{
+    transition: transform 0.2s ease, filter 0.2s ease, margin-top 0.3s ease, margin-bottom 0.3s ease;
+}
+
+div.d-card div.card{
+    transition: transform 0.2s ease;
+}
+
+div.d-card:hover{
+    transform: scale(1.5);
+    z-index: 10000;
+}
+
+.modal-card div.d-card:hover{
+    transform: scale(1);
+}
+
+div.d-card.play-card{
+    transform: scale(1.3);
+    z-index: 10000;
+}
+
+div.hand{
+    padding-top: 10px;
+    border-top: 1px solid #9a8068;
+    margin-top: 10px;
+    background: #efe7dc;
+}
+
+div.d-cards{
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+div.a-hand{
+    background: #9a8068;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+div.d-hand{}
+
+div.d-card{
+    vertical-align: top;
+    display: inline-block;
+    width: 24%;
+    max-width: 200px;
+    line-height: 0;
+    margin-top: 0px;
+    font-size: 0px;
+    border-radius: 3%;
+    margin: 0.5%;
+}
+
+.active, div.location.userstate.active{
+    background: #76a1ef;
+    border-radius: 0px;
+    padding: 5px 0px;
+    transition: background 0.2s ease;
+}
+
+div.location.selectable{
+    box-shadow: 0 0 1px 3px #2f64c6;
+    cursor: pointer;
+}
+
+div.d-card.selectable{
+    box-shadow: 0 0 0 3px #2f64c6;
+    cursor: pointer;
+}
+
+div.d-card.selectable.selred{
+    box-shadow: 0 0 0 3px #ff0000;
+}
+
+div.d-card.selectable.selected{
+    box-shadow: 0 0 0 4px white;
+    margin-top: 0px;
+    margin-bottom: 1%;
+}
+
+div.noslave div.d-card.ss.selectable{
+    box-shadow: 0 0 0 3px #22201c;
+}
+
+div.noslave div.d-card.ss.selectable.selected{
+    box-shadow: 0 0 0 3px white;
+}
+
+div.d-card div.card{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    padding-top: 137.4%;
+    background-size: 100% 100%;
+    border-radius: 3%;
+    transition: transform 0.2s ease;
+}
+
+div.d-card.back div.card{
+    background-image: url(i/b.jpg);
+}
+
+div.d-card div.d-hand-count{
+    position: absolute;
+    bottom: 10%;
+    left: 10%;
+    font-size: 20px;
+    color: white;
+}
+
+div.d-card div.d-hand-count span.small{
+    font-size: 12px;
+}
+
+div.injured div.card{
+    left: 15%;
+    width: 70%;
+    padding-top: 96.2%;
+}
+
+div.injured div.card{
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+div.d-hand-points{
+    z-index: 10;
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    background-size: 100% 100%;
+    width: 48px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 14px 0px;
+    text-align: center;
+    background-image: url(i/slavers/p.png);
+    color: white;
+}
+
+div.modal{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    overflow: auto;
+    background: url(i/back.jpg);
+    background-size: cover;
+    color: white;
+    z-index: 100000;
+}
+
+div.modal.card{
+    background: transparent;
+}
+
+div.state{
+    position: absolute;
+    top: auto;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding: 5px;
+    overflow: visible;
+    background: #2f64c6;
+    font-size: 18px;
+    color: white;
+    z-index: 10000;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    text-align: center;
+}
+
+div.state div.text.right{
+    margin: 0px 28px;
+}
+
+div.state div.button{}
+
+div.state div.help{
+    position: absolute;
+    right: 0px;
+    top: -18px;
+    padding: 6px 0px;
+    width: 32px;
+    height: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+    border-radius: 1000px;
+    border: 2px solid #2f64c6;
+    background: white;
+    color: #163163;
+    cursor: pointer;
+}
+
+div.state-center div.player-name{
+    display: none;
+}
+
+div.state-center div.help{
+    display: none;
+}
+
+div.state-center{
+    pointer-events: none;
+    position: absolute;
+    top: auto;
+    left: 0px;
+    right: 0px;
+    padding: 5px;
+    overflow: visible;
+    color: white;
+    z-index: 10000;
+    text-align: center;
+
+    font-size: 30px;
+    background: rgba(18, 20, 84, 0.9);
+    bottom: 50%;
+    border-top: 1px solid rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    box-shadow: 0px 0px 5px 0px black;
+}
+
+div.state-center.green{
+    background: rgba(14, 50, 14, 0.9);
+}
+
+div.state-center.green span.half{
+    color: #83ff83;
+}
+
+div.state-center.red{
+    background: rgba(60, 10, 10, 0.95);
+}
+
+div.state-center.red span.half{
+    color: #ff8383;
+}
+
+div.state-center.violet{
+    background: rgba(50, 10, 40, 0.9);
+}
+
+div.state-center.violet span.half{
+    color: #ff83ff;
+}
+
+div.state-center span.small{
+    display: none;
+}
+
+div.state-center .button{
+    display: none;
+}
+
+div.desk-text{
+    opacity: 0.7;
+    position: absolute;
+    left: 10px;
+    padding-top: 0px;
+    z-index: 2000;
+    font-size: 30px;
+    color: rgba(0,0,0,0.8);
+    text-shadow: 2px 0px 0px white, 2px 2px 0px white, 0px 2px 0px white, -2px 2px 0px white, 2px -2px 0px white, -2px -2px 0px white, 0px -2px 0px white, -2px 0px 0px white;
+}
+
+div.game{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #ead5b9;
+    z-index: 0;
+}
+
+.modal-header{
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    padding: 10px 0px 10px;    
+}
+
+.cards-container{
+    text-align: center;
+}
+
+div.button{
+    background: white;
+    color: black;
+    margin-top: 3px;
+    padding: 5px 0px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.raid-points{
+    text-align: center;
+    height: 40px;
+}
+
+.raid-points div.location{
+    max-width: none;
+    width: 100%;
+}
+
+.raid-points div.location div.location-back{
+    opacity: 0.7;
+}
+
+.header-hand .hand-base{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #9a8068;
+    margin-bottom: 10px;
+    background: #efe7dc;
+}
+
+.winners{
+    text-align: center;
+}
+
+.winner-player{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    padding: 1px;
+    background-size: 100% 100%;
+}
+
+.winner-player.place1{
+    background-image: url(i/w1.png);
+}
+
+.winner-player.place2{
+    background-image: url(i/w2.png);
+}
+
+.winner-player.place3{
+    background-image: url(i/w3.png);
+}
+
+.winner-player-padding{
+    margin: 7px;
+    padding: 2px 0px;
+    line-height: 1;
+    border-radius: 2000px;
+    text-align: center;
+}
+
+.winner-player-padding .pl-points{
+    width: 44px;
+    padding: 12px 0px;
+}
+
+.modal-raider-header{
+    max-width: 500px;
+    width: 100%;
+    margin: 5% auto 2%;
+}
+
+.modal-raider-header:after{
+    content: '';
+    position: relative;
+    display: block;
+    left: 2%;
+    width: 96%;
+    padding-bottom: 42%;
+    background-image: url(i/l.png);
+    background-size: 100% 100%;
+}
+
+.modal-raider-header.small{
+    max-width: 100px;
+    margin: 2% 0px 2%;
+}
+
+.modal-tutorial-image{
+    vertical-align: bottom;
+    width: 100%;
+    margin: 2% 0px 0%;
+}
+
+.modal-winner-padding{
+    margin-top: 10px;
+    padding: 1px;
+    background: rgba(203,212,114,0.5);
+}
+
+.modal-tutorial-text{
+    padding: 2% 2% 1px;
+    background: rgba(203,212,114,0.5);
+    margin: 0% 0px 2%;
+    text-align: left;
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.modal-tutorial-text p{
+    margin: 0px 0px 2%;
+}
+
+.modal-tutorial-text a{
+    text-decoration: underline;
+    color: #023aa2;
+    font-weight: normal;
+}
+
+.modal-raider-center{
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    margin: 0% auto;
+}
+
+.modal-raider-button.big{
+    font-size: 24px;
+    padding: 20px 50px 26px 45px;
+}
+
+.modal-raider-button{
+    margin: 20px 0px;
+    display: inline-block;
+    padding: 15px 60px 20px 40px;
+    font-size: 20px;
+    font-weight: normal;
+    cursor: pointer;
+    background-image: url(i/but.png);
+    background-size: 100% 100%;
+    transform: rotate(-3deg);
+}
+
+.modal-raider-button:active{
+    top: 2px;
+    left: 1px;
+}
+
+.winners-text{
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 10px 0px 0px;
+}
+
+.winners-text-two{
+    text-align: center;
+    font-size: 20px;
+    font-weight: normal;
+    color: black;
+    margin: 0px 0px 10px;
+}
+
+.winners-text-one{
+    max-width: 480px;
+    margin: 10px auto 10px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px;
+}
+
+div.winner-player.red div.pl-points{
+    background-image: url(i/giens/p.png);
+    color: #fff0f0;
+}
+
+div.winner-player.green div.pl-points{
+    background-image: url(i/valkiries/p.png);
+    color: #f0fff0;
+}
+
+div.winner-player.violet div.pl-points{
+    background-image: url(i/impeccable/p.png);
+    color: #fff0ff;
+}
+
+div.winner-player.yellow div.pl-points{
+    background-image: url(i/slavers/p.png);
+    color: #fffff0;
+}
+
+img.small{
+    vertical-align: bottom;
+    height: 30px;
+}
+
+@media screen and (max-width: 767px) {
+    div.d-card div.d-hand-count{
+        left: 4%;
+    }
+    .modal-header{
+        font-size: 20px;
+    }
+    div.d-hand-points{
+        width: 34px;
+        padding: 7px 0px;
+        right: -2%;
+        top: -2%;
+    }
+    div.l-cards-count{
+        font-size: 30px;
+    }
+    .modal-tutorial-text{
+        font-size: 16px;
+    }    
+    img.small{
+        vertical-align: bottom;
+        height: 24px;
+    }
+    .modal-raider-button{
+        display: inline-block;
+        padding: 15px 55px 20px 40px;
+    }
+    div.d-card:hover{
+        transform: scale(1);
+        z-index: 10000;
+    }
+    .modal-raider-button.mini{
+        margin: 10px 0px;
+    }    
+    div.desk-text{
+        left: 4px;
+        font-size: 16px;
+    }
+    #state-center{
+        font-size: 20px;
+    }
+    div.d-card div.d-point{
+        position: absolute;
+        margin-left: -13px;
+        width: 26px;
+        height: 32px;
+    }
+    div.location.userstate div.l-cards{
+        margin-left: 15%;
+    }
+}
